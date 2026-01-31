@@ -1,0 +1,36 @@
+# ============================================
+# render.yaml - Render Blueprint Configuration
+# Auto-deploy when push to GitHub
+# ============================================
+
+services:
+  # ============================================
+  # Backend API Service
+  # ============================================
+  - type: web
+    name: mmrrdikub-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: singapore  # ใกล้ไทย = เร็วกว่า
+    plan: free         # Free tier!
+    
+    # Build Settings
+    buildFilter:
+      paths:
+        - backend/**
+    
+    # Environment Variables (ตั้งค่าใน Render Dashboard)
+    envVars:
+      - key: DB_URL
+        sync: false     # ต้องใส่เองใน Dashboard
+      - key: JWT_SECRET
+        sync: false     # ต้องใส่เองใน Dashboard
+      - key: PORT
+        value: 8080
+    
+    # Health Check
+    healthCheckPath: /health
+    
+    # Auto Deploy
+    autoDeploy: true
