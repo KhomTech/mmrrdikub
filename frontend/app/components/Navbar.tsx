@@ -128,11 +128,11 @@ export default function Navbar() {
                                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                         className={cn(
                                             'absolute right-0 mt-2 w-64 sm:w-72 rounded-xl border shadow-xl overflow-hidden z-50',
-                                            theme === 'dark' ? 'bg-[#161b22] border-[#30363d]' : 'bg-white border-gray-200'
+                                            theme === 'dark' ? 'bg-[var(--surface)] border-[var(--border)]' : 'bg-white border-gray-200'
                                         )}
                                     >
                                         {/* Search */}
-                                        <div className={cn('p-2 border-b', theme === 'dark' ? 'border-[#30363d]' : 'border-gray-200')}>
+                                        <div className={cn('p-2 border-b', theme === 'dark' ? 'border-[var(--border)]' : 'border-gray-200')}>
                                             <div className="relative">
                                                 <Search className={cn('absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5', theme === 'dark' ? 'text-gray-500' : 'text-gray-400')} />
                                                 <input
@@ -142,7 +142,7 @@ export default function Navbar() {
                                                     placeholder={t('searchLanguage')}
                                                     className={cn(
                                                         'w-full pl-7 pr-7 py-1.5 rounded-lg text-sm outline-none',
-                                                        theme === 'dark' ? 'bg-[#0d1117] border border-[#30363d] text-white' : 'bg-gray-50 border border-gray-200 text-gray-900'
+                                                        theme === 'dark' ? 'bg-[var(--background)] border border-[var(--border)] text-white' : 'bg-gray-50 border border-gray-200 text-gray-900'
                                                     )}
                                                 />
                                                 {langSearch && (
@@ -160,7 +160,7 @@ export default function Navbar() {
                                         <div className="max-h-80 overflow-y-auto">
                                             {tier1.length > 0 && (
                                                 <>
-                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[#0d1117] text-gray-500' : 'bg-gray-50 text-gray-500')}>
+                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[var(--background)] text-gray-500' : 'bg-gray-50 text-gray-500')}>
                                                         🌏 {t('tier1')}
                                                     </div>
                                                     {tier1.map(l => (
@@ -181,7 +181,7 @@ export default function Navbar() {
                                             )}
                                             {tier2.length > 0 && (
                                                 <>
-                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[#0d1117] text-gray-500' : 'bg-gray-50 text-gray-500')}>
+                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[var(--background)] text-gray-500' : 'bg-gray-50 text-gray-500')}>
                                                         🌍 {t('tier2')}
                                                     </div>
                                                     {tier2.map(l => (
@@ -202,7 +202,7 @@ export default function Navbar() {
                                             )}
                                             {tier3.length > 0 && (
                                                 <>
-                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[#0d1117] text-gray-500' : 'bg-gray-50 text-gray-500')}>
+                                                    <div className={cn('px-3 py-1.5 text-xs font-medium', theme === 'dark' ? 'bg-[var(--background)] text-gray-500' : 'bg-gray-50 text-gray-500')}>
                                                         🇪🇺 {t('tier3')}
                                                     </div>
                                                     {tier3.map(l => (

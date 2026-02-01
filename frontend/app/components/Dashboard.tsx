@@ -325,7 +325,7 @@ export default function Dashboard() {
     if (!isLoggedIn) {
         return (
             <div className="relative">
-                <div className="bg-[#0a0e14] rounded-2xl p-6 border border-[#1e2430] opacity-30 blur-sm pointer-events-none">
+                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-2xl p-6 border border-gray-200 dark:border-[var(--border)] opacity-30 blur-sm pointer-events-none">
                     <div className="h-96 flex items-center justify-center">
                         <BarChart3 className="w-16 h-16 text-gray-700" />
                     </div>
@@ -334,7 +334,7 @@ export default function Dashboard() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-[#161b22] rounded-2xl p-8 border-2 border-accent/50 text-center max-w-md"
+                        className="bg-white dark:bg-[var(--surface)] rounded-2xl p-8 border-2 border-accent/50 text-center max-w-md"
                     >
                         <Lock className="w-12 h-12 mx-auto mb-4 text-accent" />
                         <h2 className="text-2xl font-bold mb-2">🔒 Pro Analytics</h2>
@@ -387,7 +387,7 @@ export default function Dashboard() {
                     <button
                         onClick={fetchTrades}
                         disabled={loading}
-                        className="px-3 sm:px-4 py-2 rounded-xl bg-[#161b22] border border-[#30363d] hover:border-accent transition-all flex items-center gap-2 text-sm"
+                        className="px-3 sm:px-4 py-2 rounded-xl bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] hover:border-accent transition-all flex items-center gap-2 text-sm"
                     >
                         <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
                         <span className="hidden sm:inline">{t('refresh')}</span>
@@ -398,7 +398,7 @@ export default function Dashboard() {
             {/* Stats + Pie */}
             <div className="grid lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                    <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                         <div className="text-xs text-gray-500 mb-1">Total PnL</div>
                         <div className={cn(
                             'text-lg sm:text-2xl font-bold',
@@ -407,19 +407,19 @@ export default function Dashboard() {
                             {formatUSD(stats?.total_pnl || 0)}
                         </div>
                     </div>
-                    <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                    <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                         <div className="text-xs text-gray-500 mb-1">Win Rate</div>
                         <div className={cn('text-lg sm:text-2xl font-bold', winRate >= 50 ? 'text-green-400' : 'text-red-400')}>
                             {formatPercent(winRate)}
                         </div>
                     </div>
-                    <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-green-600/30">
+                    <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-green-600/30">
                         <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" /> Wins
                         </div>
                         <div className="text-lg sm:text-2xl font-bold text-green-400">{stats?.win_count || 0}</div>
                     </div>
-                    <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-red-600/30">
+                    <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-red-600/30">
                         <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
                             <TrendingDown className="w-3 h-3" /> Losses
                         </div>
@@ -428,7 +428,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-[#161b22] rounded-xl p-4 border border-[#30363d]">
+                <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-4 border border-gray-200 dark:border-[var(--border)]">
                     <div className="text-xs text-gray-500 mb-3 flex items-center gap-1">
                         <PieChart className="w-3 h-3" /> {t('summaryWinLoss')}
                     </div>
@@ -477,7 +477,7 @@ export default function Dashboard() {
             </div>
 
             {/* Filters */}
-            <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+            <div className="bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                 <div className="flex flex-wrap gap-3 sm:gap-4">
                     <div className="flex-1 min-w-[200px]">
                         <div className="relative">
@@ -487,14 +487,14 @@ export default function Dashboard() {
                                 placeholder={`🔍 ${t('searchAll')}`}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] focus:border-accent outline-none text-sm"
+                                className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] focus:border-accent outline-none text-sm"
                             />
                         </div>
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                        className="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                     >
                         <option value="all">All</option>
                         <option value="OPEN">🟡 Open</option>
@@ -504,7 +504,7 @@ export default function Dashboard() {
                     <select
                         value={sideFilter}
                         onChange={(e) => setSideFilter(e.target.value)}
-                        className="px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                        className="px-3 py-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                     >
                         <option value="all">All</option>
                         <option value="LONG">📈 Long</option>
@@ -516,14 +516,14 @@ export default function Dashboard() {
                             type="date"
                             value={dateFrom}
                             onChange={(e) => setDateFrom(e.target.value)}
-                            className="px-2 sm:px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm w-32 sm:w-auto"
+                            className="px-2 sm:px-3 py-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm w-32 sm:w-auto"
                         />
                         <span className="text-gray-500">-</span>
                         <input
                             type="date"
                             value={dateTo}
                             onChange={(e) => setDateTo(e.target.value)}
-                            className="px-2 sm:px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm w-32 sm:w-auto"
+                            className="px-2 sm:px-3 py-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm w-32 sm:w-auto"
                         />
                     </div>
                 </div>
@@ -537,16 +537,16 @@ export default function Dashboard() {
             )}
 
             {/* Table with Mobile Scroll Hint */}
-            <div className="bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden">
+            <div className="bg-white dark:bg-[var(--surface)] rounded-xl border border-gray-200 dark:border-[var(--border)] overflow-hidden">
                 {/* Mobile Scroll Hint */}
-                <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-[#0a0e14] text-xs text-gray-500 border-b border-[#30363d]">
+                <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-[var(--background)] text-xs text-gray-500 border-b border-gray-200 dark:border-[var(--border)]">
                     <span>👈 {t('scrollHint')}</span>
                     <ScrollHint className="w-4 h-4 animate-pulse" />
                 </div>
 
                 <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-[#30363d] scrollbar-track-[#0a0e14]">
                     <table className="w-full min-w-[900px]">
-                        <thead className="bg-[#0a0e14] border-b border-[#30363d]">
+                        <thead className="bg-gray-50 dark:bg-[var(--background)] border-b border-gray-200 dark:border-[var(--border)]">
                             <tr>
                                 {[
                                     { key: 'created_at', label: '⏰ Time' },
@@ -575,7 +575,7 @@ export default function Dashboard() {
                                         </div>
                                     </th>
                                 ))}
-                                <th className="px-3 py-3 text-xs font-medium text-gray-400 sticky right-0 bg-[#0a0e14]">Actions</th>
+                                <th className="px-3 py-3 text-xs font-medium text-gray-400 sticky right-0 bg-gray-50 dark:bg-[var(--background)]">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -595,7 +595,7 @@ export default function Dashboard() {
                                 paginatedTrades.map((trade) => {
                                     const pnlDisplay = formatPnL(trade.pnl);
                                     return (
-                                        <tr key={trade.id} className="border-b border-[#30363d] hover:bg-[#0a0e14] transition-all">
+                                        <tr key={trade.id} className="border-b border-gray-200 dark:border-[var(--border)] hover:bg-gray-50 dark:bg-[var(--background)] transition-all">
                                             <td className="px-3 py-3 text-xs text-gray-400 whitespace-nowrap">
                                                 {formatDateTime(trade.entry_time || trade.created_at)}
                                             </td>
@@ -637,7 +637,7 @@ export default function Dashboard() {
                                                     {trade.status}
                                                 </span>
                                             </td>
-                                            <td className="px-3 py-3 sticky right-0 bg-[#161b22]">
+                                            <td className="px-3 py-3 sticky right-0 bg-white dark:bg-[var(--surface)]">
                                                 <div className="flex items-center gap-1">
                                                     <button
                                                         onClick={() => setEditModal({
@@ -672,16 +672,16 @@ export default function Dashboard() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-[#30363d]">
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-[var(--border)]">
                         <div className="text-xs sm:text-sm text-gray-500">
                             {page * ITEMS_PER_PAGE + 1}-{Math.min((page + 1) * ITEMS_PER_PAGE, filteredTrades.length)} / {filteredTrades.length}
                         </div>
                         <div className="flex items-center gap-2">
-                            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="p-2 rounded-lg bg-[#0a0e14] border border-[#30363d] disabled:opacity-50">
+                            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="p-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] disabled:opacity-50">
                                 <ChevronLeft className="w-4 h-4" />
                             </button>
                             <span className="text-sm px-2 sm:px-3">{page + 1}/{totalPages}</span>
-                            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="p-2 rounded-lg bg-[#0a0e14] border border-[#30363d] disabled:opacity-50">
+                            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="p-2 rounded-lg bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-[var(--border)] disabled:opacity-50">
                                 <ChevronRight className="w-4 h-4" />
                             </button>
                         </div>
@@ -704,17 +704,17 @@ export default function Dashboard() {
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.9 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[#161b22] rounded-2xl p-5 sm:p-6 border border-[#30363d] w-full max-w-lg my-8"
+                            className="bg-white dark:bg-[var(--surface)] rounded-2xl p-5 sm:p-6 border border-gray-200 dark:border-[var(--border)] w-full max-w-lg my-8"
                         >
                             <div className="flex justify-between items-center mb-4 sm:mb-6">
                                 <h3 className="text-lg sm:text-xl font-bold">{t('editOrder')}</h3>
-                                <button onClick={() => setEditModal(null)} className="p-1 rounded hover:bg-[#30363d]">
+                                <button onClick={() => setEditModal(null)} className="p-1 rounded hover:bg-gray-200 dark:bg-[var(--border)]">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
                             <div className="space-y-3 sm:space-y-4">
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <div className="flex justify-between items-center">
                                         <span className="font-bold text-lg">{editModal.trade.pair}</span>
                                         <span className={cn(
@@ -729,34 +729,34 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <label className="block text-xs text-gray-400 mb-2"><Clock className="w-3 h-3 inline" /> {t('closeTime')}</label>
                                     <input
                                         type="datetime-local"
                                         value={editModal.exitTime}
                                         onChange={(e) => setEditModal(prev => prev ? { ...prev, exitTime: e.target.value } : null)}
-                                        className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm"
+                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                                     />
                                 </div>
 
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <label className="block text-xs text-gray-400 mb-2"><Target className="w-3 h-3 inline" /> Exit Price</label>
                                     <input
                                         type="number" step="any"
                                         value={editModal.exitPrice || ''}
                                         onChange={(e) => updateExitPrice(parseFloat(e.target.value) || 0)}
-                                        className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-lg font-bold"
+                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-lg font-bold"
                                         placeholder={t('exitPrice')}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-green-600/30">
+                                    <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-green-600/30">
                                         <label className="block text-xs text-green-400 mb-2">{t('tpHit')}</label>
                                         <select
                                             value={editModal.tpHit}
                                             onChange={(e) => setEditModal(prev => prev ? { ...prev, tpHit: e.target.value } : null)}
-                                            className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm"
+                                            className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                                         >
                                             <option value="">--</option>
                                             <option value="TP1">TP1</option>
@@ -766,12 +766,12 @@ export default function Dashboard() {
                                             <option value="Manual">Manual</option>
                                         </select>
                                     </div>
-                                    <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-red-600/30">
+                                    <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-red-600/30">
                                         <label className="block text-xs text-red-400 mb-2">{t('slHit')}</label>
                                         <select
                                             value={editModal.slHit}
                                             onChange={(e) => setEditModal(prev => prev ? { ...prev, slHit: e.target.value } : null)}
-                                            className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm"
+                                            className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                                         >
                                             <option value="">--</option>
                                             <option value="SL1">SL1</option>
@@ -782,7 +782,7 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <label className="block text-xs text-gray-400 mb-2"><DollarSign className="w-3 h-3 inline" /> {t('actualPnl')}</label>
                                     <input
                                         type="number" step="any"
@@ -793,19 +793,19 @@ export default function Dashboard() {
                                             status: parseFloat(e.target.value) > 0 ? 'WIN' : parseFloat(e.target.value) < 0 ? 'LOSS' : 'BREAK_EVEN'
                                         } : null)}
                                         className={cn(
-                                            'w-full px-3 py-2 rounded-lg bg-[#161b22] border outline-none text-xl font-bold',
+                                            'w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border outline-none text-xl font-bold',
                                             editModal.pnl > 0 ? 'border-green-600/50 text-green-400' :
-                                                editModal.pnl < 0 ? 'border-red-600/50 text-red-400' : 'border-[#30363d]'
+                                                editModal.pnl < 0 ? 'border-red-600/50 text-red-400' : 'border-gray-200 dark:border-[var(--border)]'
                                         )}
                                     />
                                 </div>
 
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <label className="block text-xs text-gray-400 mb-2">Status</label>
                                     <select
                                         value={editModal.status}
                                         onChange={(e) => setEditModal(prev => prev ? { ...prev, status: e.target.value } : null)}
-                                        className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm"
+                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm"
                                     >
                                         <option value="OPEN">🟡 OPEN</option>
                                         <option value="WIN">🟢 WIN</option>
@@ -814,13 +814,13 @@ export default function Dashboard() {
                                     </select>
                                 </div>
 
-                                <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
+                                <div className="bg-gray-50 dark:bg-[var(--background)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[var(--border)]">
                                     <label className="block text-xs text-gray-400 mb-2"><MessageSquare className="w-3 h-3 inline" /> Notes</label>
                                     <textarea
                                         value={editModal.notes}
                                         onChange={(e) => setEditModal(prev => prev ? { ...prev, notes: e.target.value } : null)}
                                         rows={2}
-                                        className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm resize-none"
+                                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-[var(--border)] outline-none text-sm resize-none"
                                         placeholder={t('notes')}
                                     />
                                 </div>

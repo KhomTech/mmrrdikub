@@ -226,6 +226,42 @@ const baseTranslations = {
     close: 'Close',
     marginExceedsPortfolio: 'Margin exceeds Portfolio! Reduce Risk% or increase Leverage',
     notes: 'Notes...',
+    // AI Trade Score - R:R Labels
+    rrExcellent: 'R:R ≥ 3:1 Excellent',
+    rrGood: 'R:R ≥ 2:1 Good',
+    rrOk: 'R:R 1.5:1 OK',
+    rrLow: 'R:R = 1:1 Low',
+    rrBad: 'R:R < 1:1 Bad',
+    // AI Trade Score - Risk Labels
+    riskConservative: 'Risk ≤ 1% (Conservative)',
+    riskStandard: 'Risk ≤ 2% (Standard)',
+    riskModerateScore: 'Risk 2-5% (Moderate)',
+    riskDangerous: 'Risk > 5% (Dangerous)',
+    // AI Trade Score - Leverage Labels
+    leverageSafe: 'Leverage ≤ 3x (Safe)',
+    leverageModerate: 'Leverage ≤ 10x (Moderate)',
+    leverageHigh: 'Leverage 10-25x (High)',
+    leverageDegen: 'Leverage > 25x (Degen)',
+    // AI Trade Score - Entry Reason Labels
+    hasEntryReason: 'Has entry reason',
+    hasCustomReason: 'Has reason (Custom)',
+    noEntryReasonScore: 'No entry reason',
+    // AI Trade Score - TP/SL Labels
+    tpslComplete: 'TP/SL 100% complete',
+    tpslIncompleteScore: 'TP/SL incomplete',
+    // AI Trade Score - Warnings
+    warnRR11: '⚠️ R:R 1:1 requires Win Rate > 50%',
+    warnRRLow: '🚨 R:R < 1 = More risk than reward!',
+    warnRiskHigh: '⚠️ Risk > 2%: Could lose 15%+ if 3 losses',
+    warnRiskDangerous: '🔥 Risk > 5% = Gambling, not trading!',
+    warnLevHigh: '⚠️ Leverage > 25x = Will get liquidated',
+    warnLevDegen: '💀 Leverage > 25x: Very high liquidation risk',
+    warnNoReason: '❓ Trading without reason = Emotional trading',
+    warnTpNotComplete: '📊 TP total (must be 100%)',
+    warnSlNotComplete: '📊 SL total (must be 100%)',
+    // AI Trade Score - Recommendations
+    setupPassed: '✅ Setup passed all criteria, ready to trade!',
+    improveSetupRec: '🛑 Improve setup before trading',
 };
 
 type TranslationKey = keyof typeof baseTranslations;

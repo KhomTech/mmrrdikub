@@ -31,45 +31,66 @@
 @import "tailwindcss";
 
 /* === CSS Variables สำหรับ Theme === */
+/* === CSS Variables สำหรับ Theme === */
 :root {
-  /* พื้นหลังและตัวอักษร - Light Mode */
-  --background: #fafafa;
-  --surface: #ffffff;
-  --foreground: #171717;
-  --muted: #737373;
+  /* Light Mode: White Background, Black Text, Green Accent */
+  --background: #ffffff;
+  --surface: #f9fafb;
+  /* gray-50 */
+  --foreground: #000000;
+  --muted: #6b7280;
+  /* gray-500 */
 
   /* สีหลักของแอพ */
   --profit: #059669;
-  --loss: #E11D48;
+  /* emerald-600 */
+  --loss: #dc2626;
+  /* red-600 */
   --accent: #059669;
+  /* emerald-600 */
 
-  /* Glassmorphism Effect */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.1);
+  /* Borders */
+  --border: #e5e7eb;
+  /* gray-200 */
 
-  /* Neon Glow */
-  --glow-profit: 0 0 20px rgba(16, 185, 129, 0.4);
-  --glow-loss: 0 0 20px rgba(244, 63, 94, 0.4);
-  --glow-accent: 0 0 30px rgba(16, 185, 129, 0.3);
+  /* Glassmorphism Effect (Subtle in Light) */
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.05);
+
+  /* Neon Glow (Subtle) */
+  --glow-profit: 0 0 15px rgba(5, 150, 105, 0.2);
+  --glow-loss: 0 0 15px rgba(220, 38, 38, 0.2);
+  --glow-accent: 0 0 20px rgba(5, 150, 105, 0.15);
 }
 
-/* Dark Theme - Bitkub Pro Style */
+/* Dark Theme - Pure Black & Neon Green */
 .dark {
-  --background: #0a0a0a;
-  --surface: #171717;
-  --foreground: #ededed;
-  --muted: #a3a3a3;
+  --background: #000000;
+  /* Pure Black */
+  --surface: #111111;
+  /* Very Dark Gray for Cards */
+  --foreground: #ffffff;
+  /* Pure White */
+  --muted: #9ca3af;
+  /* gray-400 */
 
-  --profit: #10B981;
-  --loss: #F43F5E;
-  --accent: #10B981;
+  --profit: #22c55e;
+  /* green-500 (Brighter for dark mode) */
+  --loss: #ef4444;
+  /* red-500 */
+  --accent: #22c55e;
+  /* green-500 */
 
-  --glass-bg: rgba(255, 255, 255, 0.05);
+  --border: #333333;
+
+  /* Glassmorphism Effect */
+  --glass-bg: rgba(17, 17, 17, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
 
-  --glow-profit: 0 0 25px rgba(16, 185, 129, 0.5);
-  --glow-loss: 0 0 25px rgba(244, 63, 94, 0.5);
-  --glow-accent: 0 0 40px rgba(16, 185, 129, 0.4);
+  /* Strong Neon Glow */
+  --glow-profit: 0 0 20px rgba(34, 197, 94, 0.4);
+  --glow-loss: 0 0 20px rgba(239, 68, 68, 0.4);
+  --glow-accent: 0 0 25px rgba(34, 197, 94, 0.3);
 }
 
 /* Tailwind Theme Config */

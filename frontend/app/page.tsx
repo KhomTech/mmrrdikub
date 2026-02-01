@@ -89,28 +89,28 @@ function HomeContent() {
           transition={{ delay: 0.5 }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12"
         >
-          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-green-600/50 transition-all">
+          <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-green-600/50 transition-all">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-600/20 flex items-center justify-center mb-3 sm:mb-4">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('riskMgmt')}</h3>
-            <p className="text-gray-400 text-xs sm:text-sm">{t('riskMgmtDesc')}</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('riskMgmt')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('riskMgmtDesc')}</p>
           </div>
 
-          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-accent/50 transition-all">
+          <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-accent/50 transition-all">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center mb-3 sm:mb-4">
               <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('tradeJournal')}</h3>
-            <p className="text-gray-400 text-xs sm:text-sm">{t('tradeJournalDesc')}</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('tradeJournal')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('tradeJournalDesc')}</p>
           </div>
 
-          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-yellow-500/50 transition-all">
+          <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-yellow-500/50 transition-all">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-3 sm:mb-4">
-              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-500" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('aiScore')}</h3>
-            <p className="text-gray-400 text-xs sm:text-sm">{t('aiScoreDesc')}</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('aiScore')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('aiScoreDesc')}</p>
           </div>
         </motion.section>
 
@@ -122,7 +122,7 @@ function HomeContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: 0.6 }}
-              className="bg-gradient-to-br from-[#161b22] to-[#0d1117] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center border border-accent/30"
+              className="bg-gradient-to-br from-gray-50 to-white dark:from-[var(--surface)] dark:to-black rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center border border-accent/30"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -133,11 +133,11 @@ function HomeContent() {
                 <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
               </motion.div>
 
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
                 {t('unlockFeatures')}
               </h2>
 
-              <p className="text-gray-400 text-sm max-w-md mx-auto mb-6 sm:mb-8">
+              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto mb-6 sm:mb-8">
                 {t('ctaDesc')}
               </p>
 
@@ -153,7 +153,7 @@ function HomeContent() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 + i * 0.1 }}
-                    className="px-3 py-1.5 rounded-full bg-[#30363d]/50 text-xs sm:text-sm"
+                    className="px-3 py-1.5 rounded-full bg-gray-200/50 dark:bg-[#30363d]/50 text-gray-700 dark:text-gray-300 text-xs sm:text-sm"
                   >
                     {feature.text}
                   </motion.div>
@@ -180,9 +180,9 @@ function HomeContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] text-center"
+              className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] text-center"
             >
-              <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">⚡ {t('quickActions')}</h3>
+              <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">⚡ {t('quickActions')}</h3>
               <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 <Link
                   href="/dashboard"
