@@ -198,7 +198,7 @@ function HomeContent() {
 
       {/* Footer */}
       <footer className="py-8 text-center text-sm text-gray-500 border-t border-[#30363d]">
-        <p>Made with 💚 by akkaraphon7tech@gmail.com (Open for Internship)</p>
+        <p>Made with 💚 by akkaraphon7tech@gmail.com (ตอนนี้กำลังหาที่ฝึกงานตอนปี4ครับ 11เดือน เริ่มได้ตั้งแต่ปี69 เดือน5 all mathcom)</p>
         <p className="mt-1">© 2026 All rights reserved.</p>
       </footer>
     </div>
