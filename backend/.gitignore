@@ -22,9 +22,8 @@
 *.dylib
 *.test
 *.out
-main
-api
-api.exe
+/main
+/api.exe
 
 # ============================================
 # IDE / Editor
