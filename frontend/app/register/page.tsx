@@ -1,16 +1,17 @@
 'use client';
 /**
- * Register Page - หน้าสมัครสมาชิก
- * 🔥 FIX: เพิ่ม Debug Logging และ Error Handling ที่ชัดเจน
+ * Register Page - หน้าสมัครสมาชิก (Multi-Language + Mobile-Optimized)
+ * ✅ รองรับ 10 ภาษา | ✅ Mobile-First | ✅ Redirect Support
  */
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { authAPI } from '../utils/api';
 import { cn } from '../lib/cn';
 import { ThemeProvider } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
     User,
     Lock,
@@ -28,8 +29,10 @@ import {
 
 function RegisterContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { t } = useLanguage();
 
-    // State สำหรับ Form
+    // Form State
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,91 +40,53 @@ function RegisterContent() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
-
-    // State สำหรับ Toggle Password Visibility
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    // State สำหรับ Network Error
     const [isNetworkError, setIsNetworkError] = useState(false);
 
-    // === Handle Submit ===
+    // Handle Submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // 🔥 DEBUG: Log เมื่อเริ่ม Submit
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📝 REGISTER FORM SUBMITTED');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('👤 Username:', username);
-        console.log('📧 Email:', email);
-        console.log('🔑 Password length:', password.length);
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-        // Reset Error State
         setError('');
         setIsNetworkError(false);
 
-        // Validate Username
+        // Validate
         if (!username || username.length < 3) {
-            setError('Username ต้องมีอย่างน้อย 3 ตัวอักษร');
-            console.warn('❌ Validation failed: Username too short');
+            setError('Username ≥ 3 chars');
             return;
         }
-
-        // Validate Email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailRegex.test(email)) {
-            setError('Email ไม่ถูกต้อง');
-            console.warn('❌ Validation failed: Invalid email');
+            setError('Invalid email');
             return;
         }
-
-        // Validate Password
         if (!password || password.length < 6) {
-            setError('Password ต้องมีอย่างน้อย 6 ตัวอักษร');
-            console.warn('❌ Validation failed: Password too short');
+            setError('Password ≥ 6 chars');
             return;
         }
-
-        // Validate Confirm Password
         if (password !== confirmPassword) {
-            setError('Password ไม่ตรงกัน');
-            console.warn('❌ Validation failed: Passwords do not match');
+            setError('Passwords do not match');
             return;
         }
 
-        console.log('✅ Validation passed, sending to API...');
         setLoading(true);
 
         try {
-            // 🔥 เรียก API Register
-            const response = await authAPI.register({ username, email, password });
-
-            console.log('✅ Registration successful:', response.data);
-
-            // สมัครสำเร็จ!
+            await authAPI.register({ username, email, password });
             setSuccess(true);
 
-            // Redirect ไป Login หลัง 2 วินาที
+            // Redirect to login with redirect param
+            const redirectTo = searchParams.get('redirect');
             setTimeout(() => {
-                router.push('/login');
+                router.push(redirectTo ? `/login?redirect=${redirectTo}` : '/login');
             }, 2000);
 
         } catch (err: any) {
-            console.error('❌ Registration failed:', err);
-
-            // 🔥 FIX: แยก Error ให้ชัดเจน
             if (!err.response) {
-                // Network Error - Backend ไม่ตอบ
                 setIsNetworkError(true);
-                setError('Network Error: ไม่สามารถเชื่อมต่อ Backend ได้');
-                console.error('🔥 NETWORK ERROR - Backend unreachable!');
+                setError('Network Error');
             } else {
-                // Backend ตอบกลับมา แต่เป็น Error
-                const backendMessage = err.response.data?.error || err.response.data?.message;
-                setError(backendMessage || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
-                console.error('📩 Backend Error:', backendMessage);
+                setError(err.response.data?.error || 'Error');
             }
         } finally {
             setLoading(false);
@@ -129,182 +94,155 @@ function RegisterContent() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-            {/* Background Effects */}
+        <div className="min-h-screen bg-background flex items-center justify-center p-3 sm:p-4">
+            {/* Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-profit/10 rounded-full blur-3xl" />
+                <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-accent/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-profit/10 rounded-full blur-3xl" />
             </div>
 
-            {/* Register Card */}
+            {/* Card */}
             <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative w-full max-w-md"
+                className="relative w-full max-w-sm sm:max-w-md"
             >
-                <div className="glass rounded-3xl p-8 border-2 border-accent/30 animate-breathing">
+                <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 border-accent/30">
                     {/* Logo */}
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-5 sm:mb-8">
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ delay: 0.2, type: 'spring' }}
-                            className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-accent/20 flex items-center justify-center glow-accent"
+                            className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-accent/20 flex items-center justify-center"
                         >
-                            <Wallet className="w-8 h-8 text-accent" />
+                            <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
                         </motion.div>
-                        <h1 className="text-2xl font-bold text-gradient">สมัครสมาชิก</h1>
-                        <p className="text-muted text-sm mt-1">สร้างบัญชีใหม่เพื่อใช้งาน MMRRDiKub</p>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gradient">{t('register')}</h1>
+                        <p className="text-muted text-xs sm:text-sm mt-1">Create Account</p>
                     </div>
 
-                    {/* Success Message */}
+                    {/* Success */}
                     {success ? (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="text-center py-8"
+                            className="text-center py-6 sm:py-8"
                         >
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-profit/20 flex items-center justify-center glow-profit">
-                                <Check className="w-8 h-8 text-profit" />
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-profit/20 flex items-center justify-center">
+                                <Check className="w-6 h-6 sm:w-8 sm:h-8 text-profit" />
                             </div>
-                            <h2 className="text-xl font-bold text-profit mb-2">สมัครสำเร็จ! 🎉</h2>
-                            <p className="text-muted mb-4">กำลังพาไปหน้า Login...</p>
-                            <Loader2 className="w-6 h-6 animate-spin mx-auto text-accent" />
+                            <h2 className="text-lg sm:text-xl font-bold text-profit mb-2">{t('savedSuccess')} 🎉</h2>
+                            <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin mx-auto text-accent" />
                         </motion.div>
                     ) : (
-                        /* Form */
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                             {/* Username */}
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-muted">
-                                    <User className="w-4 h-4 inline mr-1" />
-                                    Username
+                                <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 text-muted">
+                                    <User className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" /> Username
                                 </label>
                                 <input
                                     type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    placeholder="ตั้งชื่อผู้ใช้ (3+ ตัวอักษร)"
-                                    className="w-full px-4 py-3 rounded-xl glass border border-glass-border focus:border-accent outline-none transition-all"
+                                    placeholder="3+ chars"
+                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl glass border border-glass-border focus:border-accent outline-none"
                                 />
                             </div>
 
                             {/* Email */}
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-muted">
-                                    <Mail className="w-4 h-4 inline mr-1" />
-                                    Email
+                                <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 text-muted">
+                                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" /> Email
                                 </label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="email@example.com"
-                                    className="w-full px-4 py-3 rounded-xl glass border border-glass-border focus:border-accent outline-none transition-all"
+                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl glass border border-glass-border focus:border-accent outline-none"
                                 />
                             </div>
 
                             {/* Password */}
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-muted">
-                                    <Lock className="w-4 h-4 inline mr-1" />
-                                    Password
+                                <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 text-muted">
+                                    <Lock className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" /> Password
                                 </label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="ตั้งรหัสผ่าน (6+ ตัวอักษร)"
-                                        className="w-full px-4 py-3 pr-12 rounded-xl glass border border-glass-border focus:border-accent outline-none transition-all"
+                                        placeholder="6+ chars"
+                                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base rounded-lg sm:rounded-xl glass border border-glass-border focus:border-accent outline-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-accent/20 transition-all"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1"
                                     >
-                                        {showPassword ? <EyeOff className="w-5 h-5 text-muted" /> : <Eye className="w-5 h-5 text-muted" />}
+                                        {showPassword ? <EyeOff className="w-4 h-4 text-muted" /> : <Eye className="w-4 h-4 text-muted" />}
                                     </button>
                                 </div>
                             </div>
 
                             {/* Confirm Password */}
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-muted">
-                                    <Lock className="w-4 h-4 inline mr-1" />
-                                    ยืนยัน Password
+                                <label className="block text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 text-muted">
+                                    <Lock className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" /> Confirm
                                 </label>
                                 <div className="relative">
                                     <input
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        placeholder="พิมพ์รหัสผ่านอีกครั้ง"
+                                        placeholder="Confirm"
                                         className={cn(
-                                            "w-full px-4 py-3 pr-12 rounded-xl glass border outline-none transition-all",
+                                            "w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base rounded-lg sm:rounded-xl glass border outline-none",
                                             confirmPassword && password !== confirmPassword
-                                                ? "border-loss focus:border-loss"
-                                                : "border-glass-border focus:border-accent"
+                                                ? "border-loss" : "border-glass-border focus:border-accent"
                                         )}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-accent/20 transition-all"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1"
                                     >
-                                        {showConfirmPassword ? <EyeOff className="w-5 h-5 text-muted" /> : <Eye className="w-5 h-5 text-muted" />}
+                                        {showConfirmPassword ? <EyeOff className="w-4 h-4 text-muted" /> : <Eye className="w-4 h-4 text-muted" />}
                                     </button>
                                 </div>
-                                {confirmPassword && password !== confirmPassword && (
-                                    <p className="text-loss text-xs mt-1">Password ไม่ตรงกัน</p>
-                                )}
                             </div>
 
-                            {/* 🔥 Error Message - แสดงชัดเจน */}
+                            {/* Error */}
                             {error && (
                                 <motion.div
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className={cn(
-                                        "flex items-start gap-3 p-4 rounded-xl text-sm",
+                                        "flex items-center gap-2 p-2.5 sm:p-3 rounded-lg sm:rounded-xl text-xs sm:text-sm",
                                         isNetworkError ? "bg-yellow-500/20 text-yellow-400" : "bg-loss/20 text-loss"
                                     )}
                                 >
-                                    {isNetworkError ? (
-                                        <WifiOff className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                    ) : (
-                                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                    )}
-                                    <div>
-                                        <p className="font-medium">{error}</p>
-                                        {isNetworkError && (
-                                            <p className="text-xs mt-1 opacity-80">
-                                                ตรวจสอบว่า Backend รันอยู่: <code className="bg-black/30 px-1 rounded">go run cmd/api/main.go</code>
-                                            </p>
-                                        )}
-                                    </div>
+                                    {isNetworkError ? <WifiOff className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                                    <span>{error}</span>
                                 </motion.div>
                             )}
 
-                            {/* Submit Button */}
+                            {/* Submit */}
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={loading || (confirmPassword !== '' && password !== confirmPassword)}
-                                className="w-full py-3 rounded-xl font-semibold bg-accent text-white flex items-center justify-center gap-2 hover:glow-accent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base bg-accent text-white flex items-center justify-center gap-2 disabled:opacity-50"
                             >
                                 {loading ? (
-                                    <>
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                        กำลังสมัคร...
-                                    </>
+                                    <><Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> {t('saving')}</>
                                 ) : (
-                                    <>
-                                        <UserPlus className="w-5 h-5" />
-                                        สมัครสมาชิก
-                                    </>
+                                    <><UserPlus className="w-4 h-4 sm:w-5 sm:h-5" /> {t('register')}</>
                                 )}
                             </motion.button>
                         </form>
@@ -312,15 +250,15 @@ function RegisterContent() {
 
                     {/* Links */}
                     {!success && (
-                        <div className="text-center mt-6 space-y-3">
-                            <div className="flex items-center gap-2 justify-center text-sm">
-                                <span className="text-muted">มีบัญชีอยู่แล้ว?</span>
+                        <div className="text-center mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+                            <div className="flex items-center gap-1.5 sm:gap-2 justify-center text-xs sm:text-sm">
+                                <span className="text-muted">Have account?</span>
                                 <Link href="/login" className="text-accent hover:underline flex items-center gap-1 font-medium">
-                                    เข้าสู่ระบบ <ArrowRight className="w-4 h-4" />
+                                    {t('login')} <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Link>
                             </div>
-                            <Link href="/" className="text-sm text-muted hover:text-accent transition-all block">
-                                ← กลับหน้าหลัก
+                            <Link href="/" className="text-xs sm:text-sm text-muted hover:text-accent transition-all block">
+                                ← Back
                             </Link>
                         </div>
                     )}

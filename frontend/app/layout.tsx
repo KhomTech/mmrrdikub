@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { Inter, Kanit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 // Font หลัก - Inter สำหรับภาษาอังกฤษ (ดูทันสมัย อ่านง่าย)
 const inter = Inter({
@@ -39,10 +40,12 @@ export default function RootLayout({
   return (
     <html lang="th" className="dark">
       <body className={`${inter.variable} ${kanit.variable} font-sans antialiased`}>
-        {/* ThemeProvider ครอบทุกอย่าง */}
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+        {/* LanguageProvider + ThemeProvider ครอบทุกอย่าง */}
+        <LanguageProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

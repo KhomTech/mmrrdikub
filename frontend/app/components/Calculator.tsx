@@ -1,10 +1,12 @@
 'use client';
 /**
  * Calculator.tsx - PRODUCTION Position Size Calculator
- * 🔥 FINAL: Dynamic formatting, realistic AI Score, mobile optimized
+ * 🔥 FINAL: Dynamic formatting, AI Score, mobile optimized, Data Persistence
+ * ✅ Guest Save: บันทึกลง localStorage แล้ว redirect ไป login
  */
 
 import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tradeAPI } from '../utils/api';
 import { formatPrice, formatUSD, formatPercent } from '../utils/format';
@@ -233,11 +235,28 @@ export default function Calculator() {
         slLevels: [{ id: '1', price: 0, percent: 100 }],
     });
 
+    const router = useRouter();
     const [showPairDropdown, setShowPairDropdown] = useState(false);
     const [pairSearch, setPairSearch] = useState('');
     const [saving, setSaving] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [error, setError] = useState('');
+
+    // 🔥 โหลดข้อมูลจาก localStorage ถ้ามี (Guest Data Persistence)
+    useEffect(() => {
+        const savedData = localStorage.getItem('tempTradeData');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                setInputs(prev => ({ ...prev, ...parsed }));
+                // ลบข้อมูลหลังโหลดเสร็จ (ใช้ครั้งเดียว)
+                localStorage.removeItem('tempTradeData');
+                console.log('✅ Restored saved trade data from localStorage');
+            } catch (e) {
+                console.warn('⚠️ Could not parse saved trade data');
+            }
+        }
+    }, []);
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -474,7 +493,22 @@ export default function Calculator() {
 
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         if (!token) {
-            setError('กรุณาเข้าสู่ระบบก่อนบันทึก');
+            // 🔥 Guest Save: บันทึกข้อมูลลง localStorage แล้ว redirect ไป login
+            localStorage.setItem('tempTradeData', JSON.stringify({
+                pair: inputs.pair,
+                side: inputs.side,
+                portfolio: inputs.portfolio,
+                entryPrice: inputs.entryPrice,
+                riskPercent: inputs.riskPercent,
+                leverage: inputs.leverage,
+                exchange: inputs.exchange,
+                entryReason: inputs.entryReason,
+                customReason: inputs.customReason,
+                tpLevels: inputs.tpLevels,
+                slLevels: inputs.slLevels,
+            }));
+            console.log('📦 Saved trade data to localStorage, redirecting to login...');
+            router.push('/login?redirect=/');
             return;
         }
 

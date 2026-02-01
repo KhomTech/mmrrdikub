@@ -1,58 +1,54 @@
 'use client';
-/*
-  Navbar.tsx - แถบเมนูด้านบน (Connected to Real Auth)
-  เช็ค Token จาก localStorage เพื่อแสดงสถานะ Login
-*/
+/**
+ * Navbar.tsx - แถบเมนูด้านบน (Mobile-Optimized + Multi-Language)
+ * ✅ รองรับ 10 ภาษา | ✅ Mobile-First Design | ✅ Flag Dropdown
+ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage, languages } from '../context/LanguageContext';
 import { cn } from '../lib/cn';
-import { Sun, Moon, Globe, User, Wallet, LogOut } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-// === ระบบภาษา ===
-const translations = {
-    th: {
-        login: 'เข้าสู่ระบบ',
-        register: 'สมัครสมาชิก',
-        logout: 'ออกจากระบบ',
-        dashboard: 'ประวัติเทรด',
-    },
-    en: {
-        login: 'Login',
-        register: 'Register',
-        logout: 'Logout',
-        dashboard: 'Trade History',
-    },
-};
-
-type Lang = 'th' | 'en';
+import { Sun, Moon, User, Wallet, LogOut, ChevronDown, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
     const router = useRouter();
     const { theme, toggleTheme } = useTheme();
+    const { lang, setLang, t, flag } = useLanguage();
 
-    // State สำหรับภาษา
-    const [lang, setLang] = useState<Lang>('th');
+    // Dropdown States
+    const [showLangDropdown, setShowLangDropdown] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const langRef = useRef<HTMLDivElement>(null);
 
-    // State สำหรับ Login - เช็คจาก Token ใน localStorage
+    // Login State
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
 
-    // เช็ค Token ตอนโหลดหน้า
+    // Check Token on mount
     useEffect(() => {
         const token = localStorage.getItem('token');
         const savedUsername = localStorage.getItem('username');
-
         if (token) {
             setIsLoggedIn(true);
             setUsername(savedUsername || 'User');
         }
     }, []);
 
-    // ฟังก์ชัน Logout - ลบ Token แล้ว Refresh
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            if (langRef.current && !langRef.current.contains(e.target as Node)) {
+                setShowLangDropdown(false);
+            }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, []);
+
+    // Logout Handler
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
@@ -61,10 +57,6 @@ export default function Navbar() {
         router.push('/');
     };
 
-    // สลับภาษา
-    const toggleLang = () => setLang((prev) => (prev === 'th' ? 'en' : 'th'));
-    const t = translations[lang];
-
     return (
         <motion.nav
             initial={{ y: -100, opacity: 0 }}
@@ -72,33 +64,33 @@ export default function Navbar() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="fixed top-0 left-0 right-0 z-50 glass"
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-14 sm:h-16">
 
-                    {/* Logo */}
+                    {/* Logo - ย่อขนาดบนมือถือ */}
                     <Link href="/">
                         <motion.div
-                            className="flex items-center gap-2 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer"
                             whileHover={{ scale: 1.02 }}
                         >
-                            <Wallet className="w-7 h-7 text-accent" />
-                            <span className="text-2xl font-bold text-gradient">
-                                MMRRDiKub
+                            <Wallet className="w-5 h-5 sm:w-7 sm:h-7 text-accent" />
+                            <span className="text-lg sm:text-2xl font-bold text-gradient">
+                                MMRD
+                                <span className="hidden sm:inline">iKub</span>
                             </span>
                         </motion.div>
                     </Link>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-3">
-
-                        {/* Dashboard Link - แสดงเฉพาะเมื่อ Login แล้ว */}
+                    {/* Desktop Actions */}
+                    <div className="hidden sm:flex items-center gap-2">
+                        {/* Dashboard Link */}
                         {isLoggedIn && (
                             <Link href="/dashboard">
                                 <motion.span
                                     whileHover={{ scale: 1.05 }}
                                     className="px-3 py-1.5 rounded-full text-sm font-medium hover:bg-accent/20 transition-all cursor-pointer"
                                 >
-                                    {t.dashboard}
+                                    {t('dashboard')}
                                 </motion.span>
                             </Link>
                         )}
@@ -118,26 +110,58 @@ export default function Navbar() {
                             )}
                         </motion.button>
 
-                        {/* Language Toggle */}
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={toggleLang}
-                            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:bg-accent/20"
-                        >
-                            <Globe className="w-4 h-4" />
-                            <span>{lang.toUpperCase()}</span>
-                        </motion.button>
+                        {/* Language Dropdown */}
+                        <div className="relative" ref={langRef}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setShowLangDropdown(!showLangDropdown)}
+                                className="flex items-center gap-1 px-2 py-1.5 rounded-full text-sm transition-all hover:bg-accent/20"
+                            >
+                                <span className="text-lg">{flag}</span>
+                                <ChevronDown className={cn(
+                                    'w-3 h-3 transition-transform',
+                                    showLangDropdown && 'rotate-180'
+                                )} />
+                            </motion.button>
 
-                        {/* Login/Logout */}
+                            <AnimatePresence>
+                                {showLangDropdown && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                        className="absolute right-0 mt-2 w-40 bg-[#161b22] rounded-xl border border-[#30363d] shadow-xl overflow-hidden z-50"
+                                    >
+                                        {languages.map((l) => (
+                                            <button
+                                                key={l.code}
+                                                onClick={() => {
+                                                    setLang(l.code);
+                                                    setShowLangDropdown(false);
+                                                }}
+                                                className={cn(
+                                                    'w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-accent/20 transition-all text-sm',
+                                                    lang === l.code && 'bg-accent/30 text-accent'
+                                                )}
+                                            >
+                                                <span className="text-lg">{l.flag}</span>
+                                                <span>{l.name}</span>
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Auth Buttons */}
                         {isLoggedIn ? (
-                            // ถ้า Login แล้ว - แสดงชื่อ + ปุ่ม Logout
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass">
                                     <div className="w-6 h-6 rounded-full bg-accent/30 flex items-center justify-center">
                                         <User className="w-3 h-3 text-accent" />
                                     </div>
-                                    <span className="text-sm font-medium">{username}</span>
+                                    <span className="text-sm font-medium max-w-[80px] truncate">{username}</span>
                                 </div>
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
@@ -146,36 +170,104 @@ export default function Navbar() {
                                     className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-loss/20 text-loss hover:bg-loss/30 transition-all"
                                 >
                                     <LogOut className="w-4 h-4" />
-                                    <span>{t.logout}</span>
+                                    <span className="hidden md:inline">{t('logout')}</span>
                                 </motion.button>
                             </div>
                         ) : (
-                            // ถ้ายังไม่ Login - แสดงปุ่ม Register + Login
                             <div className="flex items-center gap-2">
                                 <Link href="/register">
                                     <motion.span
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="px-4 py-2 rounded-full text-sm font-medium glass hover:bg-accent/20 transition-all cursor-pointer"
+                                        className="px-3 py-1.5 rounded-full text-sm font-medium glass hover:bg-accent/20 transition-all cursor-pointer"
                                     >
-                                        {t.register}
+                                        {t('register')}
                                     </motion.span>
                                 </Link>
                                 <Link href="/login">
                                     <motion.span
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="btn-primary flex items-center gap-2 cursor-pointer"
+                                        className="btn-primary text-sm px-3 py-1.5 flex items-center gap-1 cursor-pointer"
                                     >
                                         <User className="w-4 h-4" />
-                                        <span>{t.login}</span>
+                                        <span>{t('login')}</span>
                                     </motion.span>
                                 </Link>
                             </div>
                         )}
                     </div>
+
+                    {/* Mobile Actions */}
+                    <div className="flex sm:hidden items-center gap-1">
+                        {/* Lang Switcher (Compact) */}
+                        <button
+                            onClick={() => setShowLangDropdown(!showLangDropdown)}
+                            className="p-1.5 rounded-full hover:bg-accent/20"
+                        >
+                            <span className="text-lg">{flag}</span>
+                        </button>
+
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="p-1.5 rounded-full hover:bg-accent/20"
+                        >
+                            {theme === 'dark' ? (
+                                <Sun className="w-4 h-4 text-yellow-400" />
+                            ) : (
+                                <Moon className="w-4 h-4 text-slate-700" />
+                            )}
+                        </button>
+
+                        {/* Auth Buttons (Compact) */}
+                        {isLoggedIn ? (
+                            <button
+                                onClick={handleLogout}
+                                className="p-1.5 rounded-full bg-loss/20 text-loss"
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <Link href="/login">
+                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-accent text-black">
+                                    {t('login')}
+                                </span>
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
+
+            {/* Mobile Language Dropdown (Shared) */}
+            <AnimatePresence>
+                {showLangDropdown && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="sm:hidden border-t border-[#30363d] bg-[#0d1117]"
+                    >
+                        <div className="grid grid-cols-5 gap-1 p-2">
+                            {languages.map((l) => (
+                                <button
+                                    key={l.code}
+                                    onClick={() => {
+                                        setLang(l.code);
+                                        setShowLangDropdown(false);
+                                    }}
+                                    className={cn(
+                                        'p-2 text-center rounded-lg hover:bg-accent/20 transition-all',
+                                        lang === l.code && 'bg-accent/30'
+                                    )}
+                                >
+                                    <span className="text-xl">{l.flag}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }

@@ -1,18 +1,20 @@
 'use client';
-/*
-  page.tsx - หน้าหลักของ MMRRDiKub
-  แสดง Calculator + Banner ชวน Login (เฉพาะตอนไม่ได้ Login)
-*/
+/**
+ * page.tsx - หน้าหลักของ MMRRDiKub (Multi-Language + Mobile Optimized)
+ * ✅ รองรับ 10 ภาษา | ✅ Data Persistence | ✅ Mobile-First
+ */
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
+import { useLanguage } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Calculator from './components/Calculator';
 import Link from 'next/link';
-import { Lock, Sparkles, BarChart3, TrendingUp, Zap, User, Star } from 'lucide-react';
+import { Lock, BarChart3, TrendingUp, User, Star } from 'lucide-react';
 
 function HomeContent() {
+  const { t } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
 
@@ -27,23 +29,23 @@ function HomeContent() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
 
-      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <main className="pt-16 sm:pt-20 pb-12 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 
         {/* Hero Section */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
           <motion.h1
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl sm:text-5xl font-bold mb-4"
+            className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
           >
             Trade <span className="text-gradient">Smarter</span>, Not Harder
           </motion.h1>
@@ -51,9 +53,9 @@ function HomeContent() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-muted text-lg max-w-2xl mx-auto"
+            className="text-muted text-sm sm:text-lg max-w-2xl mx-auto"
           >
-            เครื่องมือคำนวณ Position Size ระดับมืออาชีพ พร้อมระบบบันทึกและวิเคราะห์การเทรด
+            {t('heroSubtitle')}
           </motion.p>
 
           {/* Welcome Message when Logged In */}
@@ -62,10 +64,10 @@ function HomeContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 text-accent"
+              className="mt-3 sm:mt-4 inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-accent/20 text-accent text-sm"
             >
-              <User className="w-4 h-4" />
-              <span>สวัสดี <strong>{username}</strong>! พร้อมเทรดแล้ว 🚀</span>
+              <User className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>{t('welcome')} <strong>{username}</strong>! 🚀</span>
             </motion.div>
           )}
         </motion.section>
@@ -75,7 +77,7 @@ function HomeContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
           <Calculator />
         </motion.section>
@@ -85,30 +87,30 @@ function HomeContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12"
         >
-          <div className="bg-[#161b22] rounded-2xl p-6 border border-[#30363d] hover:border-green-600/50 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-green-600/20 flex items-center justify-center mb-4">
-              <TrendingUp className="w-6 h-6 text-green-400" />
+          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-green-600/50 transition-all">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-600/20 flex items-center justify-center mb-3 sm:mb-4">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
             </div>
-            <h3 className="text-lg font-bold mb-2">Risk Management</h3>
-            <p className="text-gray-400 text-sm">คำนวณขนาดไม้ที่เหมาะสมกับความเสี่ยงที่รับได้</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('riskMgmt')}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">{t('riskMgmtDesc')}</p>
           </div>
 
-          <div className="bg-[#161b22] rounded-2xl p-6 border border-[#30363d] hover:border-accent/50 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center mb-4">
-              <BarChart3 className="w-6 h-6 text-accent" />
+          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-accent/50 transition-all">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center mb-3 sm:mb-4">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
             </div>
-            <h3 className="text-lg font-bold mb-2">Trade Journal</h3>
-            <p className="text-gray-400 text-sm">บันทึกและติดตามประวัติการเทรดทั้งหมด</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('tradeJournal')}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">{t('tradeJournalDesc')}</p>
           </div>
 
-          <div className="bg-[#161b22] rounded-2xl p-6 border border-[#30363d] hover:border-yellow-500/50 transition-all">
-            <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-4">
-              <Star className="w-6 h-6 text-yellow-500" />
+          <div className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] hover:border-yellow-500/50 transition-all">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-3 sm:mb-4">
+              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
             </div>
-            <h3 className="text-lg font-bold mb-2">AI Trade Score</h3>
-            <p className="text-gray-400 text-sm">คะแนนประเมิน Setup และคำแนะนำป้องกันความเสี่ยง</p>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2">{t('aiScore')}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">{t('aiScoreDesc')}</p>
           </div>
         </motion.section>
 
@@ -120,41 +122,40 @@ function HomeContent() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ delay: 0.6 }}
-              className="bg-gradient-to-br from-[#161b22] to-[#0d1117] rounded-3xl p-8 sm:p-12 text-center border border-accent/30"
+              className="bg-gradient-to-br from-[#161b22] to-[#0d1117] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center border border-accent/30"
             >
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.7, type: 'spring' }}
-                className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-accent/20 flex items-center justify-center"
+                className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 rounded-2xl bg-accent/20 flex items-center justify-center"
               >
-                <Lock className="w-8 h-8 text-accent" />
+                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
               </motion.div>
 
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-                ปลดล็อค <span className="text-gradient">Full Features</span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
+                {t('unlockFeatures')}
               </h2>
 
-              <p className="text-gray-400 max-w-md mx-auto mb-8">
-                Login เพื่อบันทึกแผนการเทรด ดูประวัติ และรับคำแนะนำจาก AI
+              <p className="text-gray-400 text-sm max-w-md mx-auto mb-6 sm:mb-8">
+                {t('ctaDesc')}
               </p>
 
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
                 {[
-                  { text: 'บันทึกแผนเทรด', icon: '💾' },
-                  { text: 'ดูประวัติทั้งหมด', icon: '📊' },
-                  { text: 'สถิติ WinRate', icon: '📈' },
-                  { text: 'AI แจ้งเตือน', icon: '🤖' },
+                  { text: '💾 Save', icon: '' },
+                  { text: '📊 History', icon: '' },
+                  { text: '📈 Stats', icon: '' },
+                  { text: '🤖 AI', icon: '' },
                 ].map((feature, i) => (
                   <motion.div
                     key={feature.text}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 + i * 0.1 }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#30363d]/50 text-sm"
+                    className="px-3 py-1.5 rounded-full bg-[#30363d]/50 text-xs sm:text-sm"
                   >
-                    <span>{feature.icon}</span>
-                    <span>{feature.text}</span>
+                    {feature.text}
                   </motion.div>
                 ))}
               </div>
@@ -163,9 +164,9 @@ function HomeContent() {
                 <motion.span
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-accent to-green-500 text-white font-bold text-lg px-8 py-4 rounded-xl inline-block cursor-pointer hover:shadow-lg hover:shadow-accent/30 transition-all"
+                  className="bg-gradient-to-r from-accent to-green-500 text-white font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl inline-block cursor-pointer hover:shadow-lg hover:shadow-accent/30 transition-all"
                 >
-                  🚀 เริ่มต้นใช้งาน
+                  🚀 {t('start')}
                 </motion.span>
               </Link>
             </motion.section>
@@ -179,16 +180,16 @@ function HomeContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-[#161b22] rounded-2xl p-6 border border-[#30363d] text-center"
+              className="bg-[#161b22] rounded-2xl p-4 sm:p-6 border border-[#30363d] text-center"
             >
-              <h3 className="text-lg font-bold mb-4">⚡ Quick Actions</h3>
-              <div className="flex flex-wrap justify-center gap-4">
+              <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">⚡ {t('quickActions')}</h3>
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 <Link
                   href="/dashboard"
-                  className="px-6 py-3 rounded-xl bg-accent/20 text-accent font-medium hover:bg-accent/30 transition-all flex items-center gap-2"
+                  className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-accent/20 text-accent font-medium hover:bg-accent/30 transition-all flex items-center gap-2 text-sm"
                 >
                   <BarChart3 className="w-4 h-4" />
-                  ดูประวัติการเทรด
+                  {t('viewHistory')}
                 </Link>
               </div>
             </motion.section>
@@ -197,9 +198,9 @@ function HomeContent() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-sm text-gray-500 border-t border-[#30363d]">
-        <p>Made with 💚 by akkaraphon7tech@gmail.com (ตอนนี้กำลังหาที่ฝึกงานตอนปี4ครับ 11เดือน เริ่มได้ตั้งแต่ปี69 เดือน5 all mathcom)</p>
-        <p className="mt-1">© 2026 All rights reserved.</p>
+      <footer className="py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-500 border-t border-[#30363d]">
+        <p>Made with 💚 by akkaraphon7tech@gmail.com</p>
+        <p className="mt-1">{t('footer')} | © 2026</p>
       </footer>
     </div>
   );
