@@ -288,3 +288,112 @@ body {
   color: var(--loss);
   font-weight: 700;
 }
+
+/* === Light Theme Specific Styles === */
+
+/* Light mode card backgrounds */
+.light .card-light,
+:not(.dark) .bg-\[#0a0e14\],
+:not(.dark) .bg-\[#161b22\],
+:not(.dark) .bg-\[#0d1117\] {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+/* Light mode input fields */
+:not(.dark) input,
+:not(.dark) select,
+:not(.dark) textarea {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+:not(.dark) input::placeholder,
+:not(.dark) textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+:not(.dark) input:focus,
+:not(.dark) select:focus,
+:not(.dark) textarea:focus {
+  border-color: #059669 !important;
+  outline: none;
+}
+
+/* Light mode text colors */
+:not(.dark) .text-white,
+:not(.dark) .text-gray-100,
+:not(.dark) .text-gray-200,
+:not(.dark) .text-gray-300 {
+  color: #111827 !important;
+}
+
+:not(.dark) .text-gray-400,
+:not(.dark) .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* Light mode borders */
+:not(.dark) .border-\[#30363d\],
+:not(.dark) .border-\[#1e2430\] {
+  border-color: #e5e7eb !important;
+}
+
+/* Light mode buttons */
+:not(.dark) .bg-accent\/20 {
+  background: rgba(5, 150, 105, 0.1) !important;
+}
+
+:not(.dark) .bg-accent\/30 {
+  background: rgba(5, 150, 105, 0.15) !important;
+}
+
+/* Light mode status badges */
+:not(.dark) .bg-green-600\/30 {
+  background: rgba(22, 163, 74, 0.15) !important;
+}
+
+:not(.dark) .bg-red-600\/30 {
+  background: rgba(220, 38, 38, 0.15) !important;
+}
+
+:not(.dark) .bg-yellow-600\/30 {
+  background: rgba(202, 138, 4, 0.15) !important;
+}
+
+/* Light mode slider track */
+:not(.dark) input[type="range"] {
+  background: #e5e7eb !important;
+}
+
+:not(.dark) input[type="range"]::-webkit-slider-thumb {
+  background: #059669 !important;
+}
+
+/* Light mode glass effect */
+:not(.dark) .glass {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Light mode table */
+:not(.dark) table th {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+:not(.dark) table td {
+  color: #111827 !important;
+}
+
+:not(.dark) table tr:hover {
+  background: #f9fafb !important;
+}
+
+/* Light mode modals */
+:not(.dark) .modal-content {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+}

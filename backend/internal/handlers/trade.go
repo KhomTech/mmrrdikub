@@ -23,37 +23,37 @@ type Trade struct {
 	UserID uint `gorm:"index;not null" json:"user_id"`
 
 	// === ข้อมูลพื้นฐาน ===
-	Pair string `gorm:"size:20;not null" json:"pair"` // เช่น BTC/USDT
+	Pair string `gorm:"size:50;not null" json:"pair"` // เช่น BTC/USDT (increased size)
 	Side string `gorm:"size:10;not null" json:"side"` // LONG หรือ SHORT
 
-	// === ราคา ===
-	EntryPrice float64 `gorm:"not null" json:"entry_price"`
-	ExitPrice  float64 `json:"exit_price"`
-	StopLoss   float64 `json:"stop_loss"`
-	TakeProfit float64 `json:"take_profit"`
+	// === ราคา (Fixed overflow: precision 18, scale 8) ===
+	EntryPrice float64 `gorm:"type:decimal(18,8);not null" json:"entry_price"`
+	ExitPrice  float64 `gorm:"type:decimal(18,8)" json:"exit_price"`
+	StopLoss   float64 `gorm:"type:decimal(18,8)" json:"stop_loss"`
+	TakeProfit float64 `gorm:"type:decimal(18,8)" json:"take_profit"`
 
-	// === ขนาดไม้ ===
-	PositionSize float64 `gorm:"not null" json:"position_size"` // มูลค่า USD
-	Quantity     float64 `json:"quantity"`                      // จำนวนเหรียญ
+	// === ขนาดไม้ (Fixed overflow: precision 18, scale 4) ===
+	PositionSize float64 `gorm:"type:decimal(18,4);not null" json:"position_size"` // มูลค่า USD
+	Quantity     float64 `gorm:"type:decimal(24,12)" json:"quantity"`              // จำนวนเหรียญ (ตัวเลขเล็กมากๆ)
 	Leverage     int     `gorm:"default:1" json:"leverage"`
 
-	// === 🔥 NEW: Advanced Risk Management ===
-	RiskPercent     float64 `json:"risk_percent"`      // เช่น 1.5 (หมายถึง 1.5%)
-	MaxWin          float64 `json:"max_win"`           // กำไรสูงสุดถ้าชนะ (USD)
-	MaxLoss         float64 `json:"max_loss"`          // ขาดทุนถ้าโดน SL (USD)
-	RiskRewardRatio float64 `json:"risk_reward_ratio"` // เช่น 2.5 (R:R = 1:2.5)
+	// === Advanced Risk Management (Fixed overflow) ===
+	RiskPercent     float64 `gorm:"type:decimal(10,4)" json:"risk_percent"`      // เช่น 1.5 (หมายถึง 1.5%)
+	MaxWin          float64 `gorm:"type:decimal(18,4)" json:"max_win"`           // กำไรสูงสุดถ้าชนะ (USD)
+	MaxLoss         float64 `gorm:"type:decimal(18,4)" json:"max_loss"`          // ขาดทุนถ้าโดน SL (USD)
+	RiskRewardRatio float64 `gorm:"type:decimal(10,4)" json:"risk_reward_ratio"` // เช่น 2.5 (R:R = 1:2.5)
 
-	// === 🔥 NEW: Trading Fees ===
-	Fee float64 `json:"fee"` // ค่าธรรมเนียม (USD)
+	// === Trading Fees ===
+	Fee float64 `gorm:"type:decimal(18,4)" json:"fee"` // ค่าธรรมเนียม (USD)
 
-	// === 🔥 NEW: Analysis & Reason ===
-	EntryReason string `gorm:"type:text" json:"entry_reason"` // เหตุผลเข้าเทรด (RSI Divergence, Breakout, etc.)
-	SetupScore  int    `gorm:"default:0" json:"setup_score"`  // คะแนน 1-5 ดาว (AI คำนวณจาก RR และ Risk)
+	// === Analysis & Reason ===
+	EntryReason string `gorm:"type:text" json:"entry_reason"` // เหตุผลเข้าเทรด
+	SetupScore  int    `gorm:"default:0" json:"setup_score"`  // คะแนน 1-5 ดาว
 
-	// === ผลลัพธ์ ===
-	PnL        float64 `gorm:"column:pnl" json:"pnl"`                 // กำไร/ขาดทุนจริง (USD)
-	PnLPercent float64 `gorm:"column:pnl_percent" json:"pnl_percent"` // กำไร/ขาดทุน (%)
-	Status     string  `gorm:"size:20;default:'OPEN'" json:"status"`  // OPEN, WIN, LOSS, BREAK_EVEN
+	// === ผลลัพธ์ (Fixed overflow) ===
+	PnL        float64 `gorm:"column:pnl;type:decimal(18,4)" json:"pnl"`                 // กำไร/ขาดทุนจริง (USD)
+	PnLPercent float64 `gorm:"column:pnl_percent;type:decimal(10,4)" json:"pnl_percent"` // กำไร/ขาดทุน (%)
+	Status     string  `gorm:"size:20;default:'OPEN'" json:"status"`                     // OPEN, WIN, LOSS, BREAK_EVEN
 
 	// === ข้อมูลเพิ่มเติม ===
 	Notes string `gorm:"type:text" json:"notes"` // บันทึกเพิ่มเติม

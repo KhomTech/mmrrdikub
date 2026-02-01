@@ -2,6 +2,7 @@
 /**
  * Dashboard.tsx - PRODUCTION Trading Dashboard
  * 🔥 FINAL: UTF-8 BOM Export, Dynamic Formatting, Mobile Scroll Hint
+ * ✅ Multi-Language Support + Theme Support
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -9,6 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { tradeAPI, Trade, TradeStats } from '../utils/api';
 import { formatPrice, formatUSD, formatPercent, formatPnL } from '../utils/format';
 import { cn } from '../lib/cn';
+import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import {
     BarChart3,
     Search,
@@ -59,6 +62,9 @@ interface EditModalData {
 }
 
 export default function Dashboard() {
+    const { t } = useLanguage();
+    const { theme } = useTheme();
+
     // Auth
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
@@ -117,7 +123,7 @@ export default function Dashboard() {
             setTrades(response.data.trades || []);
             setStats(response.data.stats);
         } catch (err: any) {
-            setError(err.response?.data?.error || 'ไม่สามารถโหลดข้อมูลได้');
+            setError(err.response?.data?.error || t('serverError'));
         } finally {
             setLoading(false);
         }
@@ -161,12 +167,12 @@ export default function Dashboard() {
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm('ยืนยันการลบ?')) return;
+        if (!confirm(t('confirmDelete'))) return;
         try {
             await tradeAPI.delete(id);
             fetchTrades();
         } catch (err: any) {
-            alert(err.response?.data?.error || 'ลบไม่สำเร็จ');
+            alert(err.response?.data?.error || t('deleteFailed'));
         }
     };
 
@@ -185,7 +191,7 @@ export default function Dashboard() {
             setEditModal(null);
             fetchTrades();
         } catch (err: any) {
-            alert(err.response?.data?.error || 'อัพเดทไม่สำเร็จ');
+            alert(err.response?.data?.error || t('updateFailed'));
         } finally {
             setSaving(false);
         }
@@ -226,7 +232,7 @@ export default function Dashboard() {
     // ============================================
     const exportToCSV = async () => {
         if (filteredTrades.length === 0) {
-            alert('ไม่มีข้อมูลให้ Export');
+            alert(t('noData'));
             return;
         }
 
@@ -237,8 +243,8 @@ export default function Dashboard() {
 
         try {
             const headers = [
-                'ID', 'วันที่', 'คู่เทรด', 'ทิศทาง', 'ราคาเข้า', 'ราคาออก', 'ขนาดไม้',
-                'กำไร/ขาดทุน', 'กำไร%', 'สถานะ', 'R:R', 'คะแนน', 'เหตุผล', 'หมายเหตุ'
+                'ID', 'Date', 'Pair', 'Side', 'Entry', 'Exit', 'Size',
+                'PnL', 'PnL%', 'Status', 'R:R', 'Score', 'Reason', 'Notes'
             ];
 
             const rows = filteredTrades.map(t => [
@@ -332,9 +338,9 @@ export default function Dashboard() {
                     >
                         <Lock className="w-12 h-12 mx-auto mb-4 text-accent" />
                         <h2 className="text-2xl font-bold mb-2">🔒 Pro Analytics</h2>
-                        <p className="text-gray-400 mb-6">Login เพื่อดูประวัติและสถิติ</p>
+                        <p className="text-gray-400 mb-6">{t('pleaseLogin')}</p>
                         <Link href="/login" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-white font-bold">
-                            <LogIn className="w-5 h-5" /> เข้าสู่ระบบ
+                            <LogIn className="w-5 h-5" /> {t('login')}
                         </Link>
                     </motion.div>
                 </div>
@@ -351,8 +357,8 @@ export default function Dashboard() {
                         <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                     </div>
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-bold">Trade Journal</h2>
-                        <p className="text-xs sm:text-sm text-gray-400">สวัสดี {username}! 🚀</p>
+                        <h2 className="text-xl sm:text-2xl font-bold">{t('tradeJournal')}</h2>
+                        <p className="text-xs sm:text-sm text-gray-400">{t('welcome')}, {username}! 🚀</p>
                     </div>
                 </div>
                 <div className="flex gap-2">
@@ -369,12 +375,12 @@ export default function Dashboard() {
                         {exporting ? (
                             <>
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                <span className="hidden sm:inline">กำลังดาวน์โหลด...</span>
+                                <span className="hidden sm:inline">{t('downloading')}</span>
                             </>
                         ) : (
                             <>
                                 <FileSpreadsheet className="w-4 h-4" />
-                                <span className="hidden sm:inline">Export CSV</span>
+                                <span className="hidden sm:inline">{t('exportCsv')}</span>
                             </>
                         )}
                     </button>
@@ -384,7 +390,7 @@ export default function Dashboard() {
                         className="px-3 sm:px-4 py-2 rounded-xl bg-[#161b22] border border-[#30363d] hover:border-accent transition-all flex items-center gap-2 text-sm"
                     >
                         <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
-                        <span className="hidden sm:inline">รีเฟรช</span>
+                        <span className="hidden sm:inline">{t('refresh')}</span>
                     </button>
                 </div>
             </div>
@@ -424,7 +430,7 @@ export default function Dashboard() {
                 {/* Pie Chart */}
                 <div className="bg-[#161b22] rounded-xl p-4 border border-[#30363d]">
                     <div className="text-xs text-gray-500 mb-3 flex items-center gap-1">
-                        <PieChart className="w-3 h-3" /> สรุป Win/Loss
+                        <PieChart className="w-3 h-3" /> {t('summaryWinLoss')}
                     </div>
                     <div className="flex items-center justify-center">
                         <div className="relative w-28 h-28 sm:w-32 sm:h-32">
@@ -448,7 +454,7 @@ export default function Dashboard() {
                             <div className="absolute inset-0 flex items-center justify-center text-center">
                                 <div>
                                     <div className="text-lg font-bold">{trades.length}</div>
-                                    <div className="text-xs text-gray-500">Total</div>
+                                    <div className="text-xs text-gray-500">{t('total')}</div>
                                 </div>
                             </div>
                         </div>
@@ -478,7 +484,7 @@ export default function Dashboard() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                             <input
                                 type="text"
-                                placeholder="🔍 ค้นหาทุกอย่าง..."
+                                placeholder={`🔍 ${t('searchAll')}`}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] focus:border-accent outline-none text-sm"
@@ -534,7 +540,7 @@ export default function Dashboard() {
             <div className="bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden">
                 {/* Mobile Scroll Hint */}
                 <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-[#0a0e14] text-xs text-gray-500 border-b border-[#30363d]">
-                    <span>👈 เลื่อนซ้าย-ขวาเพื่อดูข้อมูลเพิ่ม</span>
+                    <span>👈 {t('scrollHint')}</span>
                     <ScrollHint className="w-4 h-4 animate-pulse" />
                 </div>
 
@@ -582,7 +588,7 @@ export default function Dashboard() {
                             ) : paginatedTrades.length === 0 ? (
                                 <tr>
                                     <td colSpan={11} className="px-4 py-12 text-center text-gray-500">
-                                        {searchQuery ? `ไม่พบผลลัพธ์สำหรับ "${searchQuery}"` : 'ไม่มีข้อมูล'}
+                                        {searchQuery ? `${t('noResults')} "${searchQuery}"` : t('noData')}
                                     </td>
                                 </tr>
                             ) : (
@@ -701,7 +707,7 @@ export default function Dashboard() {
                             className="bg-[#161b22] rounded-2xl p-5 sm:p-6 border border-[#30363d] w-full max-w-lg my-8"
                         >
                             <div className="flex justify-between items-center mb-4 sm:mb-6">
-                                <h3 className="text-lg sm:text-xl font-bold">ปิด / แก้ไข Order</h3>
+                                <h3 className="text-lg sm:text-xl font-bold">{t('editOrder')}</h3>
                                 <button onClick={() => setEditModal(null)} className="p-1 rounded hover:bg-[#30363d]">
                                     <X className="w-5 h-5" />
                                 </button>
@@ -724,7 +730,7 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
-                                    <label className="block text-xs text-gray-400 mb-2"><Clock className="w-3 h-3 inline" /> เวลาปิด</label>
+                                    <label className="block text-xs text-gray-400 mb-2"><Clock className="w-3 h-3 inline" /> {t('closeTime')}</label>
                                     <input
                                         type="datetime-local"
                                         value={editModal.exitTime}
@@ -740,13 +746,13 @@ export default function Dashboard() {
                                         value={editModal.exitPrice || ''}
                                         onChange={(e) => updateExitPrice(parseFloat(e.target.value) || 0)}
                                         className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-lg font-bold"
-                                        placeholder="ราคาปิด"
+                                        placeholder={t('exitPrice')}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-green-600/30">
-                                        <label className="block text-xs text-green-400 mb-2">TP ที่โดน</label>
+                                        <label className="block text-xs text-green-400 mb-2">{t('tpHit')}</label>
                                         <select
                                             value={editModal.tpHit}
                                             onChange={(e) => setEditModal(prev => prev ? { ...prev, tpHit: e.target.value } : null)}
@@ -761,7 +767,7 @@ export default function Dashboard() {
                                         </select>
                                     </div>
                                     <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-red-600/30">
-                                        <label className="block text-xs text-red-400 mb-2">SL ที่โดน</label>
+                                        <label className="block text-xs text-red-400 mb-2">{t('slHit')}</label>
                                         <select
                                             value={editModal.slHit}
                                             onChange={(e) => setEditModal(prev => prev ? { ...prev, slHit: e.target.value } : null)}
@@ -777,7 +783,7 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="bg-[#0a0e14] rounded-xl p-3 sm:p-4 border border-[#30363d]">
-                                    <label className="block text-xs text-gray-400 mb-2"><DollarSign className="w-3 h-3 inline" /> Actual PnL</label>
+                                    <label className="block text-xs text-gray-400 mb-2"><DollarSign className="w-3 h-3 inline" /> {t('actualPnl')}</label>
                                     <input
                                         type="number" step="any"
                                         value={editModal.pnl || ''}
@@ -815,7 +821,7 @@ export default function Dashboard() {
                                         onChange={(e) => setEditModal(prev => prev ? { ...prev, notes: e.target.value } : null)}
                                         rows={2}
                                         className="w-full px-3 py-2 rounded-lg bg-[#161b22] border border-[#30363d] outline-none text-sm resize-none"
-                                        placeholder="บันทึกสิ่งที่เรียนรู้..."
+                                        placeholder={t('notes')}
                                     />
                                 </div>
 
@@ -827,7 +833,7 @@ export default function Dashboard() {
                                     className="w-full py-3 sm:py-4 rounded-xl bg-gradient-to-r from-accent to-green-500 text-white font-bold flex items-center justify-center gap-2"
                                 >
                                     {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
-                                    {saving ? 'กำลังบันทึก...' : 'บันทึกผล'}
+                                    {saving ? t('saving') : t('save')}
                                 </motion.button>
                             </div>
                         </motion.div>

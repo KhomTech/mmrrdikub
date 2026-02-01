@@ -2,7 +2,7 @@
 /**
  * Calculator.tsx - PRODUCTION Position Size Calculator
  * 🔥 FINAL: Dynamic formatting, AI Score, mobile optimized, Data Persistence
- * ✅ Guest Save: บันทึกลง localStorage แล้ว redirect ไป login
+ * ✅ Multi-Language Support + Theme Support + Number Validation
  */
 
 import { useState, useMemo, useEffect } from 'react';
@@ -12,6 +12,8 @@ import { tradeAPI } from '../utils/api';
 import { formatPrice, formatUSD, formatPercent } from '../utils/format';
 import { calculateTradeMetrics, formatRR } from '../utils/tradeCalculations';
 import { cn } from '../lib/cn';
+import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import {
     Calculator as CalcIcon,
     TrendingUp,
@@ -220,6 +222,9 @@ interface CalculatorInputs {
 }
 
 export default function Calculator() {
+    const { t } = useLanguage();
+    const { theme } = useTheme();
+
     const [inputs, setInputs] = useState<CalculatorInputs>({
         pair: 'BTC/USDT',
         side: 'LONG',
@@ -582,15 +587,15 @@ export default function Calculator() {
     const canSave = inputs.entryPrice > 0 && tpTotal === 100 && slTotal === 100 && calculation.positionSize > 0;
 
     return (
-        <div className="bg-[#0a0e14] rounded-2xl p-4 sm:p-6 border border-[#1e2430] shadow-2xl">
+        <div className="bg-white dark:bg-[#0a0e14] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[#1e2430] shadow-2xl transition-colors duration-300">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
                     <CalcIcon className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                    <h2 className="text-xl sm:text-2xl font-bold">Position Calculator</h2>
-                    <p className="text-xs sm:text-sm text-gray-500">คำนวณ Multi-TP/SL พร้อม AI Score</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('positionCalc')}</h2>
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{t('calcDesc')}</p>
                 </div>
             </div>
 
@@ -600,7 +605,7 @@ export default function Calculator() {
                     {/* Pair + Side */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="relative pair-dropdown-container">
-                            <label className="block text-xs font-medium mb-2 text-gray-400">🪙 คู่เทรด</label>
+                            <label className="block text-xs font-medium mb-2 text-gray-500 dark:text-gray-400">🪙 {t('tradingPair')}</label>
                             <input
                                 type="text"
                                 value={inputs.pair}
@@ -611,8 +616,8 @@ export default function Calculator() {
                                     setShowPairDropdown(true);
                                 }}
                                 onFocus={() => setShowPairDropdown(true)}
-                                placeholder="พิมพ์ค้นหา... BTC, AI, Meme, DeFi"
-                                className="w-full px-4 py-3 rounded-xl bg-[#161b22] border border-[#30363d] focus:border-accent outline-none text-white font-bold"
+                                placeholder={t('searchPair')}
+                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] focus:border-accent outline-none text-gray-900 dark:text-white font-bold placeholder-gray-400 transition-colors"
                             />
 
                             <AnimatePresence>
@@ -621,12 +626,12 @@ export default function Calculator() {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="absolute z-50 w-full mt-2 bg-[#161b22] rounded-xl border border-[#30363d] overflow-hidden shadow-xl"
+                                        className="absolute z-50 w-full mt-2 bg-white dark:bg-[#161b22] rounded-xl border border-gray-200 dark:border-[#30363d] overflow-hidden shadow-xl"
                                     >
                                         <div className="max-h-64 overflow-y-auto">
                                             {/* Search hint */}
-                                            <div className="px-3 py-2 text-xs text-gray-500 border-b border-[#30363d] bg-[#0d1117]">
-                                                💡 ค้นหาด้วย: ชื่อเหรียญ, หมวดหมู่ (AI, Meme, DeFi) หรือ Keywords
+                                            <div className="px-3 py-2 text-xs text-gray-500 border-b border-gray-100 dark:border-[#30363d] bg-gray-50 dark:bg-[#0d1117]">
+                                                💡 {t('searchHint')}
                                             </div>
 
                                             {filteredPairs.map((pair) => (
@@ -639,7 +644,7 @@ export default function Calculator() {
                                                     }}
                                                     className={cn(
                                                         'w-full px-4 py-2.5 text-left hover:bg-accent/20 transition-all flex items-center justify-between',
-                                                        inputs.pair === pair.symbol && 'bg-accent/30'
+                                                        inputs.pair === pair.symbol ? 'bg-accent/30' : 'text-gray-900 dark:text-white'
                                                     )}
                                                 >
                                                     <span className={cn(
@@ -661,7 +666,7 @@ export default function Calculator() {
                                                     className="w-full px-4 py-2.5 text-left bg-green-900/30 text-green-400 flex items-center gap-2 border-t border-[#30363d]"
                                                 >
                                                     <span>✨</span>
-                                                    <span>เพิ่มคู่ใหม่: <strong>{inputs.pair}</strong></span>
+                                                    <span>{t('addNewPair')}: <strong>{inputs.pair}</strong></span>
                                                     <span className="text-xs px-2 py-0.5 rounded-full bg-green-600/30">Custom</span>
                                                 </button>
                                             )}
@@ -669,7 +674,7 @@ export default function Calculator() {
                                             {/* No results */}
                                             {filteredPairs.length === 0 && (
                                                 <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                                                    ไม่พบคู่เทรด - พิมพ์รูปแบบ XXX/USDT เพื่อเพิ่มใหม่
+                                                    {t('noPairFound')}
                                                 </div>
                                             )}
                                         </div>
@@ -679,7 +684,7 @@ export default function Calculator() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-2 text-gray-400">📈 ทิศทาง</label>
+                            <label className="block text-xs font-medium mb-2 text-gray-500 dark:text-gray-400">📈 {t('direction')}</label>
                             <div className="grid grid-cols-2 gap-2">
                                 <button
                                     onClick={() => setInputs(p => ({ ...p, side: 'LONG' }))}
@@ -687,7 +692,7 @@ export default function Calculator() {
                                         'py-3 rounded-xl font-bold text-sm transition-all',
                                         inputs.side === 'LONG'
                                             ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
-                                            : 'bg-[#161b22] border border-[#30363d] text-gray-400'
+                                            : 'bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1e2430]'
                                     )}
                                 >
                                     LONG
@@ -698,7 +703,7 @@ export default function Calculator() {
                                         'py-3 rounded-xl font-bold text-sm transition-all',
                                         inputs.side === 'SHORT'
                                             ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                                            : 'bg-[#161b22] border border-[#30363d] text-gray-400'
+                                            : 'bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1e2430]'
                                     )}
                                 >
                                     SHORT
@@ -709,18 +714,18 @@ export default function Calculator() {
 
                     {/* Portfolio + Entry */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-[#30363d]">
-                            <label className="block text-xs text-gray-500 mb-1">💰 Portfolio</label>
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
+                            <label className="block text-xs text-gray-500 mb-1">💰 {t('portfolio')}</label>
                             <input
                                 type="number"
                                 value={inputs.portfolio || ''}
                                 onChange={(e) => setInputs(p => ({ ...p, portfolio: parseFloat(e.target.value) || 0 }))}
-                                className="w-full text-xl sm:text-2xl font-bold bg-transparent outline-none"
+                                className="w-full text-xl sm:text-2xl font-bold bg-transparent outline-none text-gray-900 dark:text-white"
                                 placeholder="1000"
                             />
                         </div>
-                        <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-accent/30">
-                            <label className="block text-xs text-gray-500 mb-1">🎯 Entry Price</label>
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-accent/30">
+                            <label className="block text-xs text-gray-500 mb-1">🎯 {t('entryPrice')}</label>
                             <input
                                 type="number"
                                 step="any"
@@ -732,61 +737,96 @@ export default function Calculator() {
                         </div>
                     </div>
 
-                    {/* Risk Slider */}
-                    <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-[#30363d]">
+                    {/* Risk Slider with Input */}
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-gray-400">📊 Risk: <span className="text-white font-bold">{inputs.riskPercent.toFixed(1)}%</span></span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500 dark:text-gray-400">📊 Risk:</span>
+                                <input
+                                    type="number" min="0.1" max="100" step="0.1"
+                                    value={inputs.riskPercent}
+                                    onChange={(e) => setInputs(p => ({ ...p, riskPercent: Math.min(100, Math.max(0.1, parseFloat(e.target.value) || 0.1)) }))}
+                                    className="w-16 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
+                                />
+                                <span className="text-sm font-bold text-gray-500 dark:text-gray-400">%</span>
+                            </div>
                             <span className={cn(
                                 'px-2 py-1 rounded text-xs font-bold',
-                                inputs.riskPercent <= 2 ? 'bg-green-600/30 text-green-400' :
-                                    inputs.riskPercent <= 5 ? 'bg-yellow-500/30 text-yellow-400' :
-                                        'bg-red-600/30 text-red-400'
+                                inputs.riskPercent <= 2 ? 'bg-green-100 dark:bg-green-600/30 text-green-700 dark:text-green-400' :
+                                    inputs.riskPercent <= 5 ? 'bg-yellow-100 dark:bg-yellow-500/30 text-yellow-700 dark:text-yellow-400' :
+                                        'bg-red-100 dark:bg-red-600/30 text-red-700 dark:text-red-400'
                             )}>
-                                {inputs.riskPercent <= 2 ? '✅ Safe' : inputs.riskPercent <= 5 ? '⚠️ Moderate' : '🔥 Risky'}
+                                {inputs.riskPercent <= 2 ? `✅ ${t('riskSafe')}` : inputs.riskPercent <= 5 ? `⚠️ ${t('riskModerate')}` : `🔥 ${t('riskRisky')}`}
                             </span>
                         </div>
                         <input
                             type="range" min="0.1" max="20" step="0.1"
                             value={inputs.riskPercent}
                             onChange={(e) => setInputs(p => ({ ...p, riskPercent: parseFloat(e.target.value) }))}
-                            className="w-full h-2 bg-[#30363d] rounded-full appearance-none cursor-pointer accent-accent"
+                            className="w-full h-2 bg-gray-200 dark:bg-[#30363d] rounded-full appearance-none cursor-pointer accent-accent"
                         />
                     </div>
 
-                    {/* Leverage Slider */}
-                    <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-[#30363d]">
+                    {/* Leverage Slider with Input & Quick Buttons */}
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-gray-400">⚡ Leverage: <span className="text-white font-bold">{inputs.leverage}x</span></span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500 dark:text-gray-400">⚡ Leverage:</span>
+                                <input
+                                    type="number" min="1" max="125" step="1"
+                                    value={inputs.leverage}
+                                    onChange={(e) => setInputs(p => ({ ...p, leverage: Math.min(125, Math.max(1, parseInt(e.target.value) || 1)) }))}
+                                    className="w-14 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
+                                />
+                                <span className="text-sm font-bold text-gray-500 dark:text-gray-400">x</span>
+                            </div>
                             <span className={cn(
                                 'px-2 py-1 rounded text-xs font-bold',
-                                inputs.leverage <= 10 ? 'bg-green-600/30 text-green-400' :
-                                    inputs.leverage <= 25 ? 'bg-yellow-500/30 text-yellow-400' :
-                                        'bg-red-600/30 text-red-400'
+                                inputs.leverage <= 10 ? 'bg-green-100 dark:bg-green-600/30 text-green-700 dark:text-green-400' :
+                                    inputs.leverage <= 25 ? 'bg-yellow-100 dark:bg-yellow-500/30 text-yellow-700 dark:text-yellow-400' :
+                                        'bg-red-100 dark:bg-red-600/30 text-red-700 dark:text-red-400'
                             )}>
-                                {inputs.leverage <= 10 ? '✅ Low' : inputs.leverage <= 25 ? '⚠️ Med' : '💀 High'}
+                                {inputs.leverage <= 10 ? `✅ ${t('levLow')}` : inputs.leverage <= 25 ? `⚠️ ${t('levMed')}` : `💀 ${t('levHigh')}`}
                             </span>
                         </div>
                         <input
                             type="range" min="1" max="125" step="1"
                             value={inputs.leverage}
                             onChange={(e) => setInputs(p => ({ ...p, leverage: parseInt(e.target.value) }))}
-                            className="w-full h-2 bg-[#30363d] rounded-full appearance-none cursor-pointer accent-accent"
+                            className="w-full h-2 bg-gray-200 dark:bg-[#30363d] rounded-full appearance-none cursor-pointer accent-accent mb-2"
                         />
+                        {/* Quick Buttons */}
+                        <div className="flex gap-1.5 flex-wrap">
+                            {[1, 10, 25, 50, 100, 125].map((lev) => (
+                                <button
+                                    key={lev}
+                                    onClick={() => setInputs(p => ({ ...p, leverage: lev }))}
+                                    className={cn(
+                                        'px-2 py-1 text-xs rounded font-medium transition-all',
+                                        inputs.leverage === lev
+                                            ? 'bg-accent text-black shadow-md shadow-accent/20'
+                                            : 'bg-white dark:bg-[#30363d] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-transparent hover:bg-gray-100 dark:hover:bg-accent/30'
+                                    )}
+                                >
+                                    {lev}x
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* SL Levels */}
-                    <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-red-900/50">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-red-200 dark:border-red-900/50">
                         <div className="flex justify-between items-center mb-3">
                             <span className={cn(
                                 'text-sm font-medium',
-                                slTotal === 100 ? 'text-red-400' : 'text-red-300'
+                                slTotal === 100 ? 'text-red-600 dark:text-red-400' : 'text-red-400 dark:text-red-300'
                             )}>
-                                🛡️ Stop Loss ({slTotal}%)
-                                {slTotal !== 100 && <span className="text-xs ml-2">(ต้องครบ 100%)</span>}
+                                🛡️ {t('stopLoss')} ({slTotal}%)
+                                {slTotal !== 100 && <span className="text-xs ml-2">({t('mustBe100')})</span>}
                             </span>
                             {slTotal < 100 && (
-                                <button onClick={addSLLevel} className="text-xs px-2 py-1 rounded bg-red-600/20 text-red-400">
-                                    <Plus className="w-3 h-3 inline" /> เพิ่ม
+                                <button onClick={addSLLevel} className="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-600/20 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-600/30 transition-colors">
+                                    <Plus className="w-3 h-3 inline" /> {t('add')}
                                 </button>
                             )}
                         </div>
@@ -795,21 +835,21 @@ export default function Calculator() {
                                 const distance = getDistancePercent(sl.price, false);
                                 return (
                                     <div key={sl.id} className="flex gap-2 items-center">
-                                        <span className="text-xs text-gray-500 w-6">SL{idx + 1}</span>
+                                        <span className="text-xs text-gray-500 dark:text-gray-500 w-6">SL{idx + 1}</span>
                                         <div className="flex-1 relative">
                                             <input
                                                 type="number" step="any"
-                                                placeholder={inputs.side === 'LONG' ? 'ต่ำกว่า Entry' : 'สูงกว่า Entry'}
+                                                placeholder={inputs.side === 'LONG' ? t('belowEntry') : t('aboveEntry')}
                                                 value={sl.price || ''}
                                                 onChange={(e) => {
                                                     const levels = [...inputs.slLevels];
                                                     levels[idx].price = parseFloat(e.target.value) || 0;
                                                     setInputs(p => ({ ...p, slLevels: levels }));
                                                 }}
-                                                className="w-full px-3 py-2 text-sm rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none pr-16"
+                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
                                             />
                                             {distance > 0 && (
-                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-400">
+                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-600 dark:text-red-400 font-medium">
                                                     -{distance.toFixed(2)}%
                                                 </span>
                                             )}
@@ -822,11 +862,11 @@ export default function Calculator() {
                                                 levels[idx].percent = Math.min(100, parseFloat(e.target.value) || 0);
                                                 setInputs(p => ({ ...p, slLevels: levels }));
                                             }}
-                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-center"
+                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                         />
                                         <span className="text-xs text-gray-500">%</span>
                                         {inputs.slLevels.length > 1 && (
-                                            <button onClick={() => removeSLLevel(sl.id)} className="text-red-500">
+                                            <button onClick={() => removeSLLevel(sl.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors">
                                                 <X className="w-4 h-4" />
                                             </button>
                                         )}
@@ -837,18 +877,18 @@ export default function Calculator() {
                     </div>
 
                     {/* TP Levels */}
-                    <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-green-900/50">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-green-200 dark:border-green-900/50">
                         <div className="flex justify-between items-center mb-3">
                             <span className={cn(
                                 'text-sm font-medium',
-                                tpTotal === 100 ? 'text-green-400' : 'text-green-300'
+                                tpTotal === 100 ? 'text-green-600 dark:text-green-400' : 'text-green-400 dark:text-green-300'
                             )}>
-                                🎯 Take Profit ({tpTotal}%)
-                                {tpTotal !== 100 && <span className="text-xs ml-2">(ต้องครบ 100%)</span>}
+                                🎯 {t('takeProfit')} ({tpTotal}%)
+                                {tpTotal !== 100 && <span className="text-xs ml-2">({t('mustBe100')})</span>}
                             </span>
                             {tpTotal < 100 && (
-                                <button onClick={addTPLevel} className="text-xs px-2 py-1 rounded bg-green-600/20 text-green-400">
-                                    <Plus className="w-3 h-3 inline" /> เพิ่ม
+                                <button onClick={addTPLevel} className="text-xs px-2 py-1 rounded bg-green-100 dark:bg-green-600/20 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors">
+                                    <Plus className="w-3 h-3 inline" /> {t('add')}
                                 </button>
                             )}
                         </div>
@@ -857,21 +897,21 @@ export default function Calculator() {
                                 const distance = getDistancePercent(tp.price, true);
                                 return (
                                     <div key={tp.id} className="flex gap-2 items-center">
-                                        <span className="text-xs text-gray-500 w-6">TP{idx + 1}</span>
+                                        <span className="text-xs text-gray-500 dark:text-gray-500 w-6">TP{idx + 1}</span>
                                         <div className="flex-1 relative">
                                             <input
                                                 type="number" step="any"
-                                                placeholder={inputs.side === 'LONG' ? 'สูงกว่า Entry' : 'ต่ำกว่า Entry'}
+                                                placeholder={inputs.side === 'LONG' ? t('aboveEntry') : t('belowEntry')}
                                                 value={tp.price || ''}
                                                 onChange={(e) => {
                                                     const levels = [...inputs.tpLevels];
                                                     levels[idx].price = parseFloat(e.target.value) || 0;
                                                     setInputs(p => ({ ...p, tpLevels: levels }));
                                                 }}
-                                                className="w-full px-3 py-2 text-sm rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none pr-16"
+                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
                                             />
                                             {distance > 0 && (
-                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-green-400">
+                                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-green-600 dark:text-green-400 font-medium">
                                                     +{distance.toFixed(2)}%
                                                 </span>
                                             )}
@@ -884,11 +924,11 @@ export default function Calculator() {
                                                 levels[idx].percent = Math.min(100, parseFloat(e.target.value) || 0);
                                                 setInputs(p => ({ ...p, tpLevels: levels }));
                                             }}
-                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-center"
+                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                         />
                                         <span className="text-xs text-gray-500">%</span>
                                         {inputs.tpLevels.length > 1 && (
-                                            <button onClick={() => removeTPLevel(tp.id)} className="text-green-500">
+                                            <button onClick={() => removeTPLevel(tp.id)} className="text-green-500 hover:text-green-700 dark:hover:text-green-400 transition-colors">
                                                 <X className="w-4 h-4" />
                                             </button>
                                         )}
@@ -900,12 +940,12 @@ export default function Calculator() {
 
                     {/* Exchange + Reason */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-[#30363d]">
-                            <label className="block text-xs text-gray-500 mb-2">💰 Exchange</label>
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
+                            <label className="block text-xs text-gray-500 mb-2">💰 {t('exchange')}</label>
                             <select
                                 value={inputs.exchange}
                                 onChange={(e) => setInputs(p => ({ ...p, exchange: e.target.value }))}
-                                className="w-full px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                             >
                                 {EXCHANGES.map(ex => (
                                     <option key={ex.name} value={ex.name}>
@@ -919,19 +959,19 @@ export default function Calculator() {
                                     value={inputs.customFee}
                                     onChange={(e) => setInputs(p => ({ ...p, customFee: parseFloat(e.target.value) || 0 }))}
                                     placeholder="Fee %"
-                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                                 />
                             )}
                         </div>
 
-                        <div className="bg-[#161b22] p-3 sm:p-4 rounded-xl border border-[#30363d]">
-                            <label className="block text-xs text-gray-500 mb-2">📝 เหตุผล</label>
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
+                            <label className="block text-xs text-gray-500 mb-2">📝 {t('entryReason')}</label>
                             <select
                                 value={inputs.entryReason}
                                 onChange={(e) => setInputs(p => ({ ...p, entryReason: e.target.value }))}
-                                className="w-full px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                             >
-                                <option value="">-- เลือก --</option>
+                                <option value="">{t('selectReason')}</option>
                                 {ENTRY_REASONS.map(r => (
                                     <option key={r} value={r}>{r}</option>
                                 ))}
@@ -941,8 +981,8 @@ export default function Calculator() {
                                     type="text"
                                     value={inputs.customReason}
                                     onChange={(e) => setInputs(p => ({ ...p, customReason: e.target.value }))}
-                                    placeholder="พิมพ์เหตุผล..."
-                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-[#0a0e14] border border-[#30363d] outline-none text-sm"
+                                    placeholder={t('customReason')}
+                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-[#0a0e14] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                                 />
                             )}
                         </div>
@@ -953,16 +993,16 @@ export default function Calculator() {
                 <div className="space-y-4">
                     {/* AI Trade Score (Detailed) */}
                     <div className={cn(
-                        'p-4 sm:p-5 rounded-xl border-2',
-                        calculation.setupScore >= 4 ? 'bg-green-900/20 border-green-600/50' :
-                            calculation.setupScore >= 3 ? 'bg-yellow-900/20 border-yellow-600/50' :
-                                'bg-red-900/20 border-red-600/50'
+                        'p-4 sm:p-5 rounded-xl border-2 transition-colors',
+                        calculation.setupScore >= 4 ? 'bg-green-100 dark:bg-green-900/20 border-green-500 dark:border-green-600/50' :
+                            calculation.setupScore >= 3 ? 'bg-yellow-100 dark:bg-yellow-900/20 border-yellow-500 dark:border-yellow-600/50' :
+                                'bg-red-100 dark:bg-red-900/20 border-red-500 dark:border-red-600/50'
                     )}>
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
-                                <Brain className="w-5 h-5 text-purple-400" />
-                                <span className="font-bold">AI Trade Score</span>
-                                <span className="text-xs text-gray-500">({calculation.totalPoints}/{calculation.maxTotalPoints} pts)</span>
+                                <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                <span className="font-bold text-gray-900 dark:text-white">{t('aiScore')}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">({calculation.totalPoints}/{calculation.maxTotalPoints} pts)</span>
                             </div>
                             {renderStars(calculation.setupScore)}
                         </div>
@@ -972,22 +1012,23 @@ export default function Calculator() {
                             {calculation.scoreBreakdown.map((item, i) => (
                                 <div key={i} className="flex items-center justify-between text-xs">
                                     <span className={cn(
-                                        item.status === 'good' ? 'text-green-400' :
-                                            item.status === 'warn' ? 'text-yellow-400' :
-                                                'text-red-400'
+                                        'font-medium',
+                                        item.status === 'good' ? 'text-green-700 dark:text-green-400' :
+                                            item.status === 'warn' ? 'text-yellow-700 dark:text-yellow-400' :
+                                                'text-red-700 dark:text-red-400'
                                     )}>
                                         {item.status === 'good' ? '✅' : item.status === 'warn' ? '⚠️' : '❌'} {item.label}
                                     </span>
-                                    <span className="text-gray-500">{item.points}/{item.maxPoints}</span>
+                                    <span className="text-gray-600 dark:text-gray-500">{item.points}/{item.maxPoints}</span>
                                 </div>
                             ))}
                         </div>
 
                         {/* Warnings */}
                         {calculation.warnings.length > 0 && (
-                            <div className="space-y-1 border-t border-gray-700 pt-3 mb-3">
+                            <div className="space-y-1 border-t border-gray-200 dark:border-gray-700 pt-3 mb-3">
                                 {calculation.warnings.map((w, i) => (
-                                    <div key={i} className="flex items-start gap-2 text-xs text-yellow-400 bg-yellow-900/30 px-2 py-1.5 rounded">
+                                    <div key={i} className="flex items-start gap-2 text-xs text-yellow-800 dark:text-yellow-400 bg-yellow-200 dark:bg-yellow-900/30 px-2 py-1.5 rounded">
                                         <AlertCircle className="w-3 h-3 flex-shrink-0 mt-0.5" />
                                         <span>{w}</span>
                                     </div>
@@ -999,7 +1040,7 @@ export default function Calculator() {
                         {calculation.recommendations.length > 0 && (
                             <div className="space-y-1">
                                 {calculation.recommendations.map((r, i) => (
-                                    <div key={i} className="text-xs text-gray-300 bg-gray-800/50 px-2 py-1.5 rounded">
+                                    <div key={i} className="text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-800/50 px-2 py-1.5 rounded">
                                         {r}
                                     </div>
                                 ))}
@@ -1009,10 +1050,10 @@ export default function Calculator() {
 
                     {/* Position Size */}
                     <div className={cn(
-                        "bg-[#161b22] rounded-xl p-4 sm:p-5 border",
-                        calculation.marginExceedsPortfolio ? 'border-red-600' : 'border-accent/50'
+                        "bg-gray-50 dark:bg-[#161b22] rounded-xl p-4 sm:p-5 border transition-colors",
+                        calculation.marginExceedsPortfolio ? 'border-red-600' : 'border-gray-200 dark:border-accent/50'
                     )}>
-                        <div className="text-xs text-gray-400 mb-1">Position Size</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('positionSize')}</div>
                         <div className="text-2xl sm:text-3xl font-bold text-accent">
                             ${formatPrice(calculation.positionSize)}
                         </div>
@@ -1023,15 +1064,15 @@ export default function Calculator() {
 
                     {/* 🆕 Required Margin (เงินต้นที่ต้องวาง) */}
                     <div className={cn(
-                        "bg-[#161b22] rounded-xl p-4 sm:p-5 border",
-                        calculation.marginExceedsPortfolio ? 'border-red-600 bg-red-900/20' : 'border-purple-600/50'
+                        "bg-gray-50 dark:bg-[#161b22] rounded-xl p-4 sm:p-5 border transition-colors",
+                        calculation.marginExceedsPortfolio ? 'border-red-600 bg-red-50 dark:bg-red-900/20' : 'border-purple-200 dark:border-purple-600/50'
                     )}>
                         <div className="flex justify-between items-start">
                             <div>
-                                <div className="text-xs text-gray-400 mb-1">💰 เงินต้นที่ต้องวาง (Margin)</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">💰 {t('requiredMargin')}</div>
                                 <div className={cn(
                                     "text-xl sm:text-2xl font-bold",
-                                    calculation.marginExceedsPortfolio ? 'text-red-400' : 'text-purple-400'
+                                    calculation.marginExceedsPortfolio ? 'text-red-600 dark:text-red-400' : 'text-purple-600 dark:text-purple-400'
                                 )}>
                                     ${formatPrice(calculation.requiredMargin || 0)}
                                 </div>
@@ -1040,37 +1081,37 @@ export default function Calculator() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <div className="text-xs text-gray-500 mb-1">คงเหลือหลังวาง</div>
+                                <div className="text-xs text-gray-500 mb-1">{t('remainingAfter')}</div>
                                 <div className={cn(
                                     "text-sm font-bold",
-                                    (inputs.portfolio - (calculation.requiredMargin || 0)) >= 0 ? 'text-green-400' : 'text-red-400'
+                                    (inputs.portfolio - (calculation.requiredMargin || 0)) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                                 )}>
                                     ${formatPrice(Math.max(0, inputs.portfolio - (calculation.requiredMargin || 0)))}
                                 </div>
                             </div>
                         </div>
                         {calculation.marginExceedsPortfolio && (
-                            <div className="mt-3 flex items-center gap-2 text-xs text-red-400 bg-red-900/50 px-3 py-2 rounded-lg">
+                            <div className="mt-3 flex items-center gap-2 text-xs text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/50 px-3 py-2 rounded-lg">
                                 <AlertTriangle className="w-4 h-4" />
-                                <span>⚠️ Margin เกิน Portfolio! ลด Risk% หรือเพิ่ม Leverage</span>
+                                <span>⚠️ {t('marginExceedsPortfolio')}</span>
                             </div>
                         )}
                     </div>
 
                     {/* Risk/Reward Grid */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-red-600/50">
-                            <div className="text-xs text-gray-400 mb-1">Max Loss</div>
-                            <div className="text-xl sm:text-2xl font-bold text-red-400">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-red-200 dark:border-red-600/50">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('maxLoss')}</div>
+                            <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
                                 -${formatPrice(calculation.maxLossWithFee)}
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
                                 Risk + Fee
                             </div>
                         </div>
-                        <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-green-600/50">
-                            <div className="text-xs text-gray-400 mb-1">Max Win</div>
-                            <div className="text-xl sm:text-2xl font-bold text-green-400">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-green-200 dark:border-green-600/50">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('maxWin')}</div>
+                            <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                                 +${formatPrice(calculation.maxWinAfterFee)}
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
@@ -1081,26 +1122,26 @@ export default function Calculator() {
 
                     {/* R:R + Fee */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-[#30363d]">
-                            <div className="text-xs text-gray-400 mb-1">R:R (Net)</div>
-                            <div className="text-2xl font-bold">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[#30363d]">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">R:R (Net)</div>
+                            <div className="text-2xl font-bold text-gray-900 dark:text-white">
                                 1:<span className={cn(
-                                    calculation.riskRewardRatio >= 2 ? 'text-green-400' :
-                                        calculation.riskRewardRatio >= 1 ? 'text-yellow-400' :
-                                            'text-red-400'
+                                    calculation.riskRewardRatio >= 2 ? 'text-green-600 dark:text-green-400' :
+                                        calculation.riskRewardRatio >= 1 ? 'text-yellow-600 dark:text-yellow-400' :
+                                            'text-red-600 dark:text-red-400'
                                 )}>{calculation.riskRewardRatio.toFixed(2)}</span>
                             </div>
                         </div>
-                        <div className="bg-[#161b22] rounded-xl p-3 sm:p-4 border border-[#30363d]">
-                            <div className="text-xs text-gray-400 mb-1">Total Fee</div>
-                            <div className="text-xl font-bold">${formatPrice(calculation.totalFee)}</div>
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[#30363d]">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('totalFee')}</div>
+                            <div className="text-xl font-bold text-gray-900 dark:text-white">${formatPrice(calculation.totalFee)}</div>
                             <div className="text-xs text-gray-500">{feeRate}% × 2</div>
                         </div>
                     </div>
 
                     {/* Error */}
                     {error && (
-                        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-900/30 text-red-400 text-sm">
+                        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm">
                             <AlertTriangle className="w-4 h-4" />
                             {error}
                         </div>
@@ -1116,27 +1157,27 @@ export default function Calculator() {
                             'w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all',
                             canSave
                                 ? 'bg-gradient-to-r from-accent to-green-500 text-white hover:shadow-lg hover:shadow-accent/30'
-                                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-400 cursor-not-allowed'
                         )}
                     >
                         {saving ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                กำลังบันทึก...
+                                {t('saving')}
                             </>
                         ) : (
                             <>
                                 <Save className="w-5 h-5" />
-                                💾 Save Trade Plan
+                                💾 {t('saveBtn')}
                             </>
                         )}
                     </motion.button>
 
                     {!canSave && inputs.entryPrice > 0 && (
                         <p className="text-center text-xs text-gray-500">
-                            {tpTotal !== 100 && `TP ต้องครบ 100% (ตอนนี้ ${tpTotal}%)`}
+                            {tpTotal !== 100 && `TP ${t('mustBe100')} (${tpTotal}%)`}
                             {tpTotal !== 100 && slTotal !== 100 && ' | '}
-                            {slTotal !== 100 && `SL ต้องครบ 100% (ตอนนี้ ${slTotal}%)`}
+                            {slTotal !== 100 && `SL ${t('mustBe100')} (${slTotal}%)`}
                         </p>
                     )}
                 </div>
@@ -1157,27 +1198,27 @@ export default function Calculator() {
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[#161b22] rounded-2xl p-6 sm:p-8 border border-green-600/50 w-full max-w-md text-center"
+                            className="bg-white dark:bg-[#161b22] rounded-2xl p-6 sm:p-8 border border-green-200 dark:border-green-600/50 w-full max-w-md text-center shadow-2xl"
                         >
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-600/20 flex items-center justify-center">
-                                <Check className="w-8 h-8 text-green-400" />
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-600/20 flex items-center justify-center">
+                                <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-2">บันทึกสำเร็จ! 🎉</h3>
-                            <p className="text-gray-400 mb-6">
-                                บันทึกแผนการเทรด {inputs.pair} เรียบร้อยแล้ว
+                            <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{t('saveSuccess')} 🎉</h3>
+                            <p className="text-gray-500 dark:text-gray-400 mb-6">
+                                {t('tradePlanSaved')} {inputs.pair}
                             </p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setShowSuccessModal(false)}
-                                    className="flex-1 py-3 rounded-xl bg-[#30363d] text-gray-300 font-medium hover:bg-[#3d444d] transition-all"
+                                    className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-[#30363d] text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-[#3d444d] transition-all"
                                 >
-                                    ปิด
+                                    {t('close')}
                                 </button>
                                 <Link
                                     href="/dashboard"
                                     className="flex-1 py-3 rounded-xl bg-accent text-white font-medium hover:shadow-lg transition-all flex items-center justify-center gap-1"
                                 >
-                                    ไปดูประวัติ <ArrowRight className="w-4 h-4" />
+                                    {t('viewHistory')} <ArrowRight className="w-4 h-4" />
                                 </Link>
                             </div>
                         </motion.div>
