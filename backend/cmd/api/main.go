@@ -77,8 +77,8 @@ func main() {
 				origin == "http://localhost:3001" {
 				return true
 			}
-			// Production (Vercel) - รองรับ subdomain ใดก็ได้ของ vercel.app
-			if strings.HasSuffix(origin, ".vercel.app") {
+			// Production (Vercel & Custom Domain)
+			if strings.HasSuffix(origin, ".vercel.app") || strings.HasSuffix(origin, ".xyz") {
 				return true
 			}
 			// Allow requests without origin (like curl, Postman)
