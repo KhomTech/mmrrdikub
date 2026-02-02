@@ -1,99 +1,62 @@
 /* 
-  globals.css - Design System ของ MMRRDiKub
-  สไตล์ Premium แบบ Bitkub Pro: ดำด้าน + เขียว Neon + Glassmorphism
-  
-  === คณิตศาสตร์เบื้องหลัง Fee Adjustment (สำหรับอธิบาย HR) ===
-  
-  ปัญหา: 
-    - ปกติเราคำนวณ Position Size = Risk Amount / Distance
-    - แต่เมื่อโดน Stop Loss จริง เราต้องเสีย "ค่าธรรมเนียม" (Fee) ด้วย
-    - ทำให้ขาดทุนจริง = Distance + Fee ซึ่งเกินกว่าที่คาดไว้!
-  
-  วิธีแก้ (Fee Adjustment):
-    - เอา Fee มารวมในตัวหาร เพื่อลดขนาดไม้ลง
-    - สูตรใหม่: Size = Risk / (Distance + Entry×Fee + SL×Fee)
-    
-  ตัวอย่าง:
-    - ทุน 1000, Risk 1% = 10 USD
-    - Entry 100, SL 99 (Distance = 1)
-    - Fee 0.1% (0.001)
-    
-    สูตรปกติ: Size = 10 / 1 = 10 units (มูลค่า 1000 USD)
-    ถ้าโดน SL: Loss = 10×1 = 10 USD แต่ต้อง + Fee 1000×0.001×2 = 2 USD
-    รวมขาดทุนจริง = 12 USD (เกิน Risk ที่ตั้งไว้!)
-    
-    สูตรปรับ Fee: ตัวหาร = 1 + 0.1 + 0.099 = 1.199
-    Size = 10 / 1.199 = 8.34 units (มูลค่า 834 USD)  
-    ถ้าโดน SL: Loss = 8.34×1 + 834×0.001×2 = 8.34 + 1.67 = 10.01 USD
-    รวมขาดทุนจริง ≈ 10 USD (ตรงกับ Risk ที่ตั้งไว้!) ✅
+  globals.css - MMRRDiKub Premium Design System
+  🎨 Clean Tailwind Setup: No broken :not(.dark) hacks
+  ✅ Dark Mode: Deep Black (#0d1117) + Emerald Accent
+  ✅ Light Mode: Clean White + Gray borders
 */
 
 @import "tailwindcss";
 
-/* === CSS Variables สำหรับ Theme === */
-/* === CSS Variables สำหรับ Theme === */
+/* === CSS Variables for Theme === */
 :root {
-  /* Light Mode: White Background, Black Text, Green Accent */
+  /* Light Mode Colors */
   --background: #ffffff;
   --surface: #f9fafb;
-  /* gray-50 */
-  --foreground: #000000;
+  --foreground: #111827;
   --muted: #6b7280;
-  /* gray-500 */
-
-  /* สีหลักของแอพ */
+  
+  /* Brand Colors */
   --profit: #059669;
-  /* emerald-600 */
   --loss: #dc2626;
-  /* red-600 */
-  --accent: #059669;
-  /* emerald-600 */
-
+  --accent: #10b981;
+  
   /* Borders */
   --border: #e5e7eb;
-  /* gray-200 */
-
-  /* Glassmorphism Effect (Subtle in Light) */
+  --card-border: #e5e7eb;
+  
+  /* Glass Effect */
   --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(0, 0, 0, 0.05);
-
-  /* Neon Glow (Subtle) */
+  --glass-border: rgba(0, 0, 0, 0.08);
+  
+  /* Glow Effects */
   --glow-profit: 0 0 15px rgba(5, 150, 105, 0.2);
   --glow-loss: 0 0 15px rgba(220, 38, 38, 0.2);
-  --glow-accent: 0 0 20px rgba(5, 150, 105, 0.15);
+  --glow-accent: 0 0 20px rgba(16, 185, 129, 0.15);
 }
 
-/* Dark Theme - Pure Black & Neon Green */
+/* Dark Theme - Bitkub Deep Black Style */
 .dark {
-  --background: #000000;
-  /* Pure Black */
-  --surface: #111111;
-  /* Very Dark Gray for Cards */
-  --foreground: #ffffff;
-  /* Pure White */
-  --muted: #9ca3af;
-  /* gray-400 */
-
+  --background: #0d1117;
+  --surface: #161b22;
+  --foreground: #ededed;
+  --muted: #8b949e;
+  
   --profit: #22c55e;
-  /* green-500 (Brighter for dark mode) */
   --loss: #ef4444;
-  /* red-500 */
-  --accent: #22c55e;
-  /* green-500 */
-
-  --border: #333333;
-
-  /* Glassmorphism Effect */
-  --glass-bg: rgba(17, 17, 17, 0.8);
+  --accent: #10b981;
+  
+  --border: #30363d;
+  --card-border: #30363d;
+  
+  --glass-bg: rgba(22, 27, 34, 0.85);
   --glass-border: rgba(255, 255, 255, 0.1);
-
-  /* Strong Neon Glow */
+  
   --glow-profit: 0 0 20px rgba(34, 197, 94, 0.4);
   --glow-loss: 0 0 20px rgba(239, 68, 68, 0.4);
-  --glow-accent: 0 0 25px rgba(34, 197, 94, 0.3);
+  --glow-accent: 0 0 25px rgba(16, 185, 129, 0.3);
 }
 
-/* Tailwind Theme Config */
+/* Tailwind Theme Integration */
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
@@ -108,19 +71,17 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
-  /* ป้องกันเลื่อนซ้ายขวา */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Inter', 'Kanit', system-ui, sans-serif;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
-  /* ป้องกันเลื่อนซ้ายขวา */
 }
 
-/* === Custom Scrollbar - Premium Dark Style === */
+/* === Scrollbar - Premium Style === */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -141,7 +102,7 @@ body {
 
 /* === Utility Classes === */
 
-/* Glass Effect - กระจกฝ้าสวยๆ */
+/* Glass Effect */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -310,111 +271,4 @@ body {
   font-weight: 700;
 }
 
-/* === Light Theme Specific Styles === */
-
-/* Light mode card backgrounds */
-.light .card-light,
-:not(.dark) .bg-\[#0a0e14\],
-:not(.dark) .bg-\[#161b22\],
-:not(.dark) .bg-\[#0d1117\] {
-  background: #ffffff !important;
-  border-color: #e5e7eb !important;
-  color: #111827 !important;
-}
-
-/* Light mode input fields */
-:not(.dark) input,
-:not(.dark) select,
-:not(.dark) textarea {
-  background: #f9fafb !important;
-  border-color: #d1d5db !important;
-  color: #111827 !important;
-}
-
-:not(.dark) input::placeholder,
-:not(.dark) textarea::placeholder {
-  color: #9ca3af !important;
-}
-
-:not(.dark) input:focus,
-:not(.dark) select:focus,
-:not(.dark) textarea:focus {
-  border-color: #059669 !important;
-  outline: none;
-}
-
-/* Light mode text colors */
-:not(.dark) .text-white,
-:not(.dark) .text-gray-100,
-:not(.dark) .text-gray-200,
-:not(.dark) .text-gray-300 {
-  color: #111827 !important;
-}
-
-:not(.dark) .text-gray-400,
-:not(.dark) .text-gray-500 {
-  color: #6b7280 !important;
-}
-
-/* Light mode borders */
-:not(.dark) .border-\[#30363d\],
-:not(.dark) .border-\[#1e2430\] {
-  border-color: #e5e7eb !important;
-}
-
-/* Light mode buttons */
-:not(.dark) .bg-accent\/20 {
-  background: rgba(5, 150, 105, 0.1) !important;
-}
-
-:not(.dark) .bg-accent\/30 {
-  background: rgba(5, 150, 105, 0.15) !important;
-}
-
-/* Light mode status badges */
-:not(.dark) .bg-green-600\/30 {
-  background: rgba(22, 163, 74, 0.15) !important;
-}
-
-:not(.dark) .bg-red-600\/30 {
-  background: rgba(220, 38, 38, 0.15) !important;
-}
-
-:not(.dark) .bg-yellow-600\/30 {
-  background: rgba(202, 138, 4, 0.15) !important;
-}
-
-/* Light mode slider track */
-:not(.dark) input[type="range"] {
-  background: #e5e7eb !important;
-}
-
-:not(.dark) input[type="range"]::-webkit-slider-thumb {
-  background: #059669 !important;
-}
-
-/* Light mode glass effect */
-:not(.dark) .glass {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Light mode table */
-:not(.dark) table th {
-  background: #f3f4f6 !important;
-  color: #374151 !important;
-}
-
-:not(.dark) table td {
-  color: #111827 !important;
-}
-
-:not(.dark) table tr:hover {
-  background: #f9fafb !important;
-}
-
-/* Light mode modals */
-:not(.dark) .modal-content {
-  background: #ffffff !important;
-  border-color: #e5e7eb !important;
-}
+/* === End of globals.css === */

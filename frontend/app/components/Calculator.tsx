@@ -334,77 +334,77 @@ export default function Calculator() {
         const scoreBreakdown: { label: string; points: number; maxPoints: number; status: 'good' | 'warn' | 'bad' }[] = [];
         let totalPoints = 0;
 
-        // 1. R:R Ratio (30 points)
+        // 1. R:R Ratio (30 points) - ENGLISH ONLY
         if (metrics.riskRewardRatio >= 3) {
             totalPoints += 30;
-            scoreBreakdown.push({ label: t('rrExcellent'), points: 30, maxPoints: 30, status: 'good' });
+            scoreBreakdown.push({ label: 'R:R ≥ 3:1 (Excellent)', points: 30, maxPoints: 30, status: 'good' });
         } else if (metrics.riskRewardRatio >= 2) {
             totalPoints += 25;
-            scoreBreakdown.push({ label: t('rrGood'), points: 25, maxPoints: 30, status: 'good' });
+            scoreBreakdown.push({ label: 'R:R ≥ 2:1 (Good)', points: 25, maxPoints: 30, status: 'good' });
         } else if (metrics.riskRewardRatio >= 1.5) {
             totalPoints += 15;
-            scoreBreakdown.push({ label: t('rrOk'), points: 15, maxPoints: 30, status: 'warn' });
+            scoreBreakdown.push({ label: 'R:R 1.5:1 (OK)', points: 15, maxPoints: 30, status: 'warn' });
         } else if (metrics.riskRewardRatio >= 1) {
             totalPoints += 5;
-            scoreBreakdown.push({ label: t('rrLow'), points: 5, maxPoints: 30, status: 'warn' });
-            warnings.push(t('warnRR11'));
+            scoreBreakdown.push({ label: 'R:R = 1:1 (Low)', points: 5, maxPoints: 30, status: 'warn' });
+            warnings.push('⚠️ R:R 1:1 requires Win Rate > 50%');
         } else {
-            scoreBreakdown.push({ label: t('rrBad'), points: 0, maxPoints: 30, status: 'bad' });
-            warnings.push(t('warnRRLow'));
+            scoreBreakdown.push({ label: '❌ R:R < 1:1 (Poor R:R)', points: 0, maxPoints: 30, status: 'bad' });
+            warnings.push('🚨 Low R:R = High Risk!');
         }
 
-        // 2. Risk % (25 points)
+        // 2. Risk % (25 points) - ENGLISH ONLY
         if (riskPercent <= 1) {
             totalPoints += 25;
-            scoreBreakdown.push({ label: t('riskConservative'), points: 25, maxPoints: 25, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Risk ≤ 1% (Conservative)', points: 25, maxPoints: 25, status: 'good' });
         } else if (riskPercent <= 2) {
             totalPoints += 20;
-            scoreBreakdown.push({ label: t('riskStandard'), points: 20, maxPoints: 25, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Risk ≤ 2% (Standard)', points: 20, maxPoints: 25, status: 'good' });
         } else if (riskPercent <= 5) {
             totalPoints += 10;
-            scoreBreakdown.push({ label: t('riskModerateScore'), points: 10, maxPoints: 25, status: 'warn' });
-            warnings.push(t('warnRiskHigh'));
+            scoreBreakdown.push({ label: '⚠️ Risk 2-5% (Moderate)', points: 10, maxPoints: 25, status: 'warn' });
+            warnings.push('⚠️ Risk > 2%: Could lose 15%+ if 3 losses');
         } else {
-            scoreBreakdown.push({ label: t('riskDangerous'), points: 0, maxPoints: 25, status: 'bad' });
-            warnings.push(t('warnRiskDangerous'));
+            scoreBreakdown.push({ label: '❌ Risk > 5% (Dangerous)', points: 0, maxPoints: 25, status: 'bad' });
+            warnings.push('🔥 Risk > 5% = Gambling, not trading!');
         }
 
-        // 3. Leverage (20 points)
+        // 3. Leverage (20 points) - ENGLISH ONLY
         if (leverage <= 3) {
             totalPoints += 20;
-            scoreBreakdown.push({ label: t('leverageSafe'), points: 20, maxPoints: 20, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Leverage ≤ 3x (Safe)', points: 20, maxPoints: 20, status: 'good' });
         } else if (leverage <= 10) {
             totalPoints += 15;
-            scoreBreakdown.push({ label: t('leverageModerate'), points: 15, maxPoints: 20, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Leverage ≤ 10x (Moderate)', points: 15, maxPoints: 20, status: 'good' });
         } else if (leverage <= 25) {
             totalPoints += 5;
-            scoreBreakdown.push({ label: t('leverageHigh'), points: 5, maxPoints: 20, status: 'warn' });
-            warnings.push(t('warnLevHigh'));
+            scoreBreakdown.push({ label: '⚠️ Leverage 10-25x (High)', points: 5, maxPoints: 20, status: 'warn' });
+            warnings.push('⚠️ Leverage > 10x = Higher liquidation risk');
         } else {
-            scoreBreakdown.push({ label: t('leverageDegen'), points: 0, maxPoints: 20, status: 'bad' });
-            warnings.push(t('warnLevDegen'));
+            scoreBreakdown.push({ label: '❌ Leverage > 25x (Degen)', points: 0, maxPoints: 20, status: 'bad' });
+            warnings.push('💀 Leverage > 25x: Very high liquidation risk');
         }
 
-        // 4. Entry Reason (15 points)
+        // 4. Entry Reason (15 points) - ENGLISH ONLY
         if (inputs.entryReason && inputs.entryReason !== 'Custom...') {
             totalPoints += 15;
-            scoreBreakdown.push({ label: t('hasEntryReason'), points: 15, maxPoints: 15, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Has Entry Reason', points: 15, maxPoints: 15, status: 'good' });
         } else if (inputs.entryReason === 'Custom...' && inputs.customReason) {
             totalPoints += 12;
-            scoreBreakdown.push({ label: t('hasCustomReason'), points: 12, maxPoints: 15, status: 'good' });
+            scoreBreakdown.push({ label: '✅ Has Reason (Custom)', points: 12, maxPoints: 15, status: 'good' });
         } else {
-            scoreBreakdown.push({ label: t('noEntryReasonScore'), points: 0, maxPoints: 15, status: 'bad' });
-            warnings.push(t('warnNoReason'));
+            scoreBreakdown.push({ label: '❌ No Entry Reason', points: 0, maxPoints: 15, status: 'bad' });
+            warnings.push('❓ No Reason = Emotional Gambling');
         }
 
-        // 5. TP/SL Validation (10 points)
+        // 5. TP/SL Validation (10 points) - ENGLISH ONLY
         if (tpTotal === 100 && slTotal === 100 && metrics.weightedSLDistance > 0 && metrics.weightedTPDistance > 0) {
             totalPoints += 10;
-            scoreBreakdown.push({ label: t('tpslComplete'), points: 10, maxPoints: 10, status: 'good' });
+            scoreBreakdown.push({ label: '✅ TP/SL 100% Complete', points: 10, maxPoints: 10, status: 'good' });
         } else {
-            scoreBreakdown.push({ label: t('tpslIncompleteScore'), points: 0, maxPoints: 10, status: 'bad' });
-            if (tpTotal !== 100) warnings.push(`${t('warnTpNotComplete')} ${tpTotal}%`);
-            if (slTotal !== 100) warnings.push(`${t('warnSlNotComplete')} ${slTotal}%`);
+            scoreBreakdown.push({ label: '❌ TP/SL Not Set (100%)', points: 0, maxPoints: 10, status: 'bad' });
+            if (tpTotal !== 100) warnings.push(`📊 TP total must be 100% (current: ${tpTotal}%)`);
+            if (slTotal !== 100) warnings.push(`📊 SL total must be 100% (current: ${slTotal}%)`);
         }
 
         // Margin validation warning
@@ -412,12 +412,12 @@ export default function Calculator() {
             warnings.push(metrics.errorMessage);
         }
 
-        // Final score
+        // Final score - ENGLISH ONLY
         const setupScore = Math.round((totalPoints / 100) * 5);
         if (warnings.length === 0 && setupScore >= 4) {
-            recommendations.push(t('setupPassed'));
+            recommendations.push('✅ Setup passed all criteria, ready to trade!');
         } else if (setupScore <= 2) {
-            recommendations.push(t('improveSetupRec'));
+            recommendations.push('🛑 Fix Setup Before Trade');
         }
 
         return {
@@ -587,7 +587,7 @@ export default function Calculator() {
     const canSave = inputs.entryPrice > 0 && tpTotal === 100 && slTotal === 100 && calculation.positionSize > 0;
 
     return (
-        <div className="bg-white dark:bg-gray-50 dark:bg-[var(--background)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] shadow-2xl transition-colors duration-300">
+        <div className="bg-white dark:bg-[#0d1117] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[#30363d] shadow-2xl transition-colors duration-300">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
@@ -617,7 +617,7 @@ export default function Calculator() {
                                 }}
                                 onFocus={() => setShowPairDropdown(true)}
                                 placeholder={t('searchPair')}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] focus:border-accent outline-none text-gray-900 dark:text-white font-bold placeholder-gray-400 transition-colors"
+                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] focus:border-accent outline-none text-gray-900 dark:text-white font-bold placeholder-gray-400 transition-colors"
                             />
 
                             <AnimatePresence>
@@ -626,11 +626,11 @@ export default function Calculator() {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
-                                        className="absolute z-50 w-full mt-2 bg-white dark:bg-white dark:bg-[var(--surface)] rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] overflow-hidden shadow-xl"
+                                        className="absolute z-50 w-full mt-2 bg-white dark:bg-[#161b22] rounded-xl border border-gray-200 dark:border-[#30363d] overflow-hidden shadow-xl"
                                     >
                                         <div className="max-h-64 overflow-y-auto">
                                             {/* Search hint */}
-                                            <div className="px-3 py-2 text-xs text-gray-500 border-b border-gray-100 dark:border-gray-200 dark:border-[var(--border)] bg-gray-50 dark:bg-[#0d1117]">
+                                            <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-[#30363d] bg-gray-50 dark:bg-[#0d1117]">
                                                 💡 {t('searchHint')}
                                             </div>
 
@@ -649,11 +649,11 @@ export default function Calculator() {
                                                 >
                                                     <span className={cn(
                                                         'font-medium',
-                                                        inputs.pair === pair.symbol ? 'text-accent' : 'text-white'
+                                                        inputs.pair === pair.symbol ? 'text-accent' : 'text-gray-900 dark:text-white'
                                                     )}>
                                                         {pair.symbol}
                                                     </span>
-                                                    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-700/50 text-gray-400">
+                                                    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400">
                                                         {pair.category}
                                                     </span>
                                                 </button>
@@ -692,7 +692,7 @@ export default function Calculator() {
                                         'py-3 rounded-xl font-bold text-sm transition-all',
                                         inputs.side === 'LONG'
                                             ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
-                                            : 'bg-gray-50 dark:bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1e2430]'
+                                            : 'bg-gray-100 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#1e2430]'
                                     )}
                                 >
                                     LONG
@@ -703,7 +703,7 @@ export default function Calculator() {
                                         'py-3 rounded-xl font-bold text-sm transition-all',
                                         inputs.side === 'SHORT'
                                             ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                                            : 'bg-gray-50 dark:bg-white dark:bg-[var(--surface)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1e2430]'
+                                            : 'bg-gray-100 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#1e2430]'
                                     )}
                                 >
                                     SHORT
@@ -714,7 +714,7 @@ export default function Calculator() {
 
                     {/* Portfolio + Entry */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                             <label className="block text-xs text-gray-500 mb-1">💰 {t('portfolio')}</label>
                             <input
                                 type="number"
@@ -724,7 +724,7 @@ export default function Calculator() {
                                 placeholder="1000"
                             />
                         </div>
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-accent/30">
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-accent/30">
                             <label className="block text-xs text-gray-500 mb-1">🎯 {t('entryPrice')}</label>
                             <input
                                 type="number"
@@ -738,7 +738,7 @@ export default function Calculator() {
                     </div>
 
                     {/* Risk Slider with Input */}
-                    <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                         <div className="flex justify-between items-center mb-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500 dark:text-gray-400">📊 Risk:</span>
@@ -746,7 +746,7 @@ export default function Calculator() {
                                     type="number" min="0.1" max="100" step="0.1"
                                     value={inputs.riskPercent}
                                     onChange={(e) => setInputs(p => ({ ...p, riskPercent: Math.min(100, Math.max(0.1, parseFloat(e.target.value) || 0.1)) }))}
-                                    className="w-16 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-center text-gray-900 dark:text-white"
+                                    className="w-16 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                 />
                                 <span className="text-sm font-bold text-gray-500 dark:text-gray-400">%</span>
                             </div>
@@ -763,12 +763,12 @@ export default function Calculator() {
                             type="range" min="0.1" max="20" step="0.1"
                             value={inputs.riskPercent}
                             onChange={(e) => setInputs(p => ({ ...p, riskPercent: parseFloat(e.target.value) }))}
-                            className="w-full h-2 bg-gray-200 dark:bg-gray-200 dark:bg-[var(--border)] rounded-full appearance-none cursor-pointer accent-accent"
+                            className="w-full h-2 bg-gray-200 dark:bg-[#30363d] rounded-full appearance-none cursor-pointer accent-accent"
                         />
                     </div>
 
                     {/* Leverage Slider with Input & Quick Buttons */}
-                    <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                         <div className="flex justify-between items-center mb-2">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500 dark:text-gray-400">⚡ Leverage:</span>
@@ -776,7 +776,7 @@ export default function Calculator() {
                                     type="number" min="1" max="125" step="1"
                                     value={inputs.leverage}
                                     onChange={(e) => setInputs(p => ({ ...p, leverage: Math.min(125, Math.max(1, parseInt(e.target.value) || 1)) }))}
-                                    className="w-14 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-center text-gray-900 dark:text-white"
+                                    className="w-14 px-2 py-1 text-sm font-bold rounded bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                 />
                                 <span className="text-sm font-bold text-gray-500 dark:text-gray-400">x</span>
                             </div>
@@ -805,7 +805,7 @@ export default function Calculator() {
                                         'px-2 py-1 text-xs rounded font-medium transition-all',
                                         inputs.leverage === lev
                                             ? 'bg-accent text-black shadow-md shadow-accent/20'
-                                            : 'bg-white dark:bg-gray-200 dark:bg-[var(--border)] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-transparent hover:bg-gray-100 dark:hover:bg-accent/30'
+                                            : 'bg-gray-100 dark:bg-[#21262d] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-[#30363d] hover:bg-gray-200 dark:hover:bg-accent/30'
                                     )}
                                 >
                                     {lev}x
@@ -815,7 +815,7 @@ export default function Calculator() {
                     </div>
 
                     {/* SL Levels */}
-                    <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-red-200 dark:border-red-900/50">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-red-200 dark:border-red-900/50">
                         <div className="flex justify-between items-center mb-3">
                             <span className={cn(
                                 'text-sm font-medium',
@@ -843,10 +843,23 @@ export default function Calculator() {
                                                 value={sl.price || ''}
                                                 onChange={(e) => {
                                                     const levels = [...inputs.slLevels];
-                                                    levels[idx].price = parseFloat(e.target.value) || 0;
+                                                    let newPrice = parseFloat(e.target.value) || 0;
+
+                                                    // Validate: SL ต้องไม่เกิน 100x entry price (ป้องกัน overflow)
+                                                    const maxSL = inputs.side === 'LONG'
+                                                        ? inputs.entryPrice * 0.01
+                                                        : inputs.entryPrice * 100;
+                                                    const minSL = 0.00000001; // ต่ำสุด
+
+                                                    if (newPrice > inputs.entryPrice * 100 && inputs.entryPrice > 0) {
+                                                        console.warn(`⚠️ SL too extreme: ${newPrice}`);
+                                                        newPrice = inputs.side === 'LONG' ? maxSL : inputs.entryPrice * 100;
+                                                    }
+
+                                                    levels[idx].price = newPrice;
                                                     setInputs(p => ({ ...p, slLevels: levels }));
                                                 }}
-                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
+                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
                                             />
                                             {distance > 0 && (
                                                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-red-600 dark:text-red-400 font-medium">
@@ -862,7 +875,7 @@ export default function Calculator() {
                                                 levels[idx].percent = Math.min(100, parseFloat(e.target.value) || 0);
                                                 setInputs(p => ({ ...p, slLevels: levels }));
                                             }}
-                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-center text-gray-900 dark:text-white"
+                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                         />
                                         <span className="text-xs text-gray-500">%</span>
                                         {inputs.slLevels.length > 1 && (
@@ -877,7 +890,7 @@ export default function Calculator() {
                     </div>
 
                     {/* TP Levels */}
-                    <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-green-200 dark:border-green-900/50">
+                    <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-green-200 dark:border-green-900/50">
                         <div className="flex justify-between items-center mb-3">
                             <span className={cn(
                                 'text-sm font-medium',
@@ -905,10 +918,22 @@ export default function Calculator() {
                                                 value={tp.price || ''}
                                                 onChange={(e) => {
                                                     const levels = [...inputs.tpLevels];
-                                                    levels[idx].price = parseFloat(e.target.value) || 0;
+                                                    let newPrice = parseFloat(e.target.value) || 0;
+
+                                                    // Validate: TP ต้องไม่เกิน 100x entry price (ป้องกัน overflow)
+                                                    const maxTP = inputs.side === 'LONG'
+                                                        ? inputs.entryPrice * 100
+                                                        : inputs.entryPrice * 0.01;
+
+                                                    if (newPrice > maxTP && inputs.entryPrice > 0) {
+                                                        console.warn(`⚠️ TP too high: ${newPrice} > max ${maxTP.toFixed(2)}`);
+                                                        newPrice = maxTP;
+                                                    }
+
+                                                    levels[idx].price = newPrice;
                                                     setInputs(p => ({ ...p, tpLevels: levels }));
                                                 }}
-                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
+                                                className="w-full px-3 py-2 text-sm rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none pr-16 text-gray-900 dark:text-white placeholder-gray-400"
                                             />
                                             {distance > 0 && (
                                                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-green-600 dark:text-green-400 font-medium">
@@ -924,7 +949,7 @@ export default function Calculator() {
                                                 levels[idx].percent = Math.min(100, parseFloat(e.target.value) || 0);
                                                 setInputs(p => ({ ...p, tpLevels: levels }));
                                             }}
-                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-center text-gray-900 dark:text-white"
+                                            className="w-14 px-2 py-2 text-sm rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-center text-gray-900 dark:text-white"
                                         />
                                         <span className="text-xs text-gray-500">%</span>
                                         {inputs.tpLevels.length > 1 && (
@@ -940,12 +965,12 @@ export default function Calculator() {
 
                     {/* Exchange + Reason */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                             <label className="block text-xs text-gray-500 mb-2">💰 {t('exchange')}</label>
                             <select
                                 value={inputs.exchange}
                                 onChange={(e) => setInputs(p => ({ ...p, exchange: e.target.value }))}
-                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-sm text-gray-900 dark:text-white"
+                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                             >
                                 {EXCHANGES.map(ex => (
                                     <option key={ex.name} value={ex.name}>
@@ -959,17 +984,17 @@ export default function Calculator() {
                                     value={inputs.customFee}
                                     onChange={(e) => setInputs(p => ({ ...p, customFee: parseFloat(e.target.value) || 0 }))}
                                     placeholder="Fee %"
-                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-sm text-gray-900 dark:text-white"
+                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                                 />
                             )}
                         </div>
 
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                        <div className="bg-gray-50 dark:bg-[#161b22] p-3 sm:p-4 rounded-xl border border-gray-200 dark:border-[#30363d]">
                             <label className="block text-xs text-gray-500 mb-2">📝 {t('entryReason')}</label>
                             <select
                                 value={inputs.entryReason}
                                 onChange={(e) => setInputs(p => ({ ...p, entryReason: e.target.value }))}
-                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-sm text-gray-900 dark:text-white"
+                                className="w-full px-3 py-2 rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                             >
                                 <option value="">{t('selectReason')}</option>
                                 {ENTRY_REASONS.map(r => (
@@ -982,7 +1007,7 @@ export default function Calculator() {
                                     value={inputs.customReason}
                                     onChange={(e) => setInputs(p => ({ ...p, customReason: e.target.value }))}
                                     placeholder={t('customReason')}
-                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-gray-50 dark:bg-[var(--background)] border border-gray-200 dark:border-gray-200 dark:border-[var(--border)] outline-none text-sm text-gray-900 dark:text-white"
+                                    className="w-full mt-2 px-3 py-2 rounded-lg bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] outline-none text-sm text-gray-900 dark:text-white"
                                 />
                             )}
                         </div>
@@ -1001,7 +1026,7 @@ export default function Calculator() {
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                                 <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                                <span className="font-bold text-gray-900 dark:text-white">{t('aiScore')}</span>
+                                <span className="font-bold text-gray-900 dark:text-white">AI Trade Score</span>
                                 <span className="text-xs text-gray-500 dark:text-gray-400">({calculation.totalPoints}/{calculation.maxTotalPoints} pts)</span>
                             </div>
                             {renderStars(calculation.setupScore)}
@@ -1050,7 +1075,7 @@ export default function Calculator() {
 
                     {/* Position Size */}
                     <div className={cn(
-                        "bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-4 sm:p-5 border transition-colors",
+                        "bg-gray-50 dark:bg-[#161b22] rounded-xl p-4 sm:p-5 border transition-colors",
                         calculation.marginExceedsPortfolio ? 'border-red-600' : 'border-gray-200 dark:border-accent/50'
                     )}>
                         <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('positionSize')}</div>
@@ -1064,7 +1089,7 @@ export default function Calculator() {
 
                     {/* 🆕 Required Margin (เงินต้นที่ต้องวาง) */}
                     <div className={cn(
-                        "bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-4 sm:p-5 border transition-colors",
+                        "bg-gray-50 dark:bg-[#161b22] rounded-xl p-4 sm:p-5 border transition-colors",
                         calculation.marginExceedsPortfolio ? 'border-red-600 bg-red-50 dark:bg-red-900/20' : 'border-purple-200 dark:border-purple-600/50'
                     )}>
                         <div className="flex justify-between items-start">
@@ -1100,7 +1125,7 @@ export default function Calculator() {
 
                     {/* Risk/Reward Grid */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-red-200 dark:border-red-600/50">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-red-200 dark:border-red-600/50">
                             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('maxLoss')}</div>
                             <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
                                 -${formatPrice(calculation.maxLossWithFee)}
@@ -1109,7 +1134,7 @@ export default function Calculator() {
                                 Risk + Fee
                             </div>
                         </div>
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-green-200 dark:border-green-600/50">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-green-200 dark:border-green-600/50">
                             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('maxWin')}</div>
                             <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                                 +${formatPrice(calculation.maxWinAfterFee)}
@@ -1122,7 +1147,7 @@ export default function Calculator() {
 
                     {/* R:R + Fee */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[#30363d]">
                             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">R:R (Net)</div>
                             <div className="text-2xl font-bold text-gray-900 dark:text-white">
                                 1:<span className={cn(
@@ -1132,7 +1157,7 @@ export default function Calculator() {
                                 )}>{calculation.riskRewardRatio.toFixed(2)}</span>
                             </div>
                         </div>
-                        <div className="bg-gray-50 dark:bg-white dark:bg-[var(--surface)] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-200 dark:border-[var(--border)]">
+                        <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-[#30363d]">
                             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('totalFee')}</div>
                             <div className="text-xl font-bold text-gray-900 dark:text-white">${formatPrice(calculation.totalFee)}</div>
                             <div className="text-xs text-gray-500">{feeRate}% × 2</div>
@@ -1198,7 +1223,7 @@ export default function Calculator() {
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-white dark:bg-white dark:bg-[var(--surface)] rounded-2xl p-6 sm:p-8 border border-green-200 dark:border-green-600/50 w-full max-w-md text-center shadow-2xl"
+                            className="bg-white dark:bg-[#161b22] rounded-2xl p-6 sm:p-8 border border-green-200 dark:border-green-600/50 w-full max-w-md text-center shadow-2xl"
                         >
                             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-600/20 flex items-center justify-center">
                                 <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -1210,7 +1235,7 @@ export default function Calculator() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setShowSuccessModal(false)}
-                                    className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-200 dark:bg-[var(--border)] text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-[#3d444d] transition-all"
+                                    className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-[#21262d] text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-[#3d444d] transition-all"
                                 >
                                     {t('close')}
                                 </button>

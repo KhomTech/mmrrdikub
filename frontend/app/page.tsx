@@ -10,6 +10,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Calculator from './components/Calculator';
+import PriceTicker from './components/PriceTicker';
 import Link from 'next/link';
 import { Lock, BarChart3, TrendingUp, User, Star } from 'lucide-react';
 
@@ -70,6 +71,16 @@ function HomeContent() {
               <span>{t('welcome')} <strong>{username}</strong>! 🚀</span>
             </motion.div>
           )}
+
+          {/* Price Ticker - Real-time BTC/ETH/GOLD */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="mt-4 sm:mt-6"
+          >
+            <PriceTicker />
+          </motion.div>
         </motion.section>
 
         {/* Calculator */}

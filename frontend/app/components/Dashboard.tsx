@@ -87,7 +87,9 @@ export default function Dashboard() {
 
     // Modal
     const [editModal, setEditModal] = useState<EditModalData | null>(null);
+    const [deleteModal, setDeleteModal] = useState<{ id: number; pair: string; entry: number } | null>(null);
     const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     // Export
     const [exporting, setExporting] = useState(false);
@@ -166,13 +168,17 @@ export default function Dashboard() {
         }));
     };
 
-    const handleDelete = async (id: number) => {
-        if (!confirm(t('confirmDelete'))) return;
+    const handleDelete = async () => {
+        if (!deleteModal) return;
+        setDeleting(true);
         try {
-            await tradeAPI.delete(id);
+            await tradeAPI.delete(deleteModal.id);
+            setDeleteModal(null);
             fetchTrades();
         } catch (err: any) {
             alert(err.response?.data?.error || t('deleteFailed'));
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -188,8 +194,10 @@ export default function Dashboard() {
                 notes: `${editModal.notes} | ${editModal.status === 'WIN' ? `Hit: ${editModal.tpHit}` : editModal.status === 'LOSS' ? `Hit: ${editModal.slHit}` : ''}`.trim(),
                 exit_time: editModal.exitTime ? new Date(editModal.exitTime).toISOString() : undefined,
             });
+            
+            // รอให้ fetchTrades เสร็จก่อนปิด modal เพื่อให้ stats อัพเดท
+            await fetchTrades();
             setEditModal(null);
-            fetchTrades();
         } catch (err: any) {
             alert(err.response?.data?.error || t('updateFailed'));
         } finally {
@@ -655,7 +663,7 @@ export default function Dashboard() {
                                                         <Edit3 className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(trade.id)}
+                                                        onClick={() => setDeleteModal({ id: trade.id, pair: trade.pair, entry: trade.entry_price })}
                                                         className="p-1.5 rounded-lg hover:bg-red-600/20 text-gray-400 hover:text-red-400 transition-all"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -835,6 +843,88 @@ export default function Dashboard() {
                                     {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
                                     {saving ? t('saving') : t('save')}
                                 </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Delete Confirmation Modal - Premium Design */}
+            <AnimatePresence>
+                {deleteModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                        onClick={() => !deleting && setDeleteModal(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-white dark:bg-[#161b22] rounded-2xl shadow-2xl max-w-md w-full border border-red-200 dark:border-red-900/50 overflow-hidden"
+                        >
+                            {/* Header with Warning Icon */}
+                            <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 text-center">
+                                <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ delay: 0.1, type: 'spring' }}
+                                    className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm mb-3"
+                                >
+                                    <AlertTriangle className="w-8 h-8 text-white" />
+                                </motion.div>
+                                <h3 className="text-xl font-bold text-white mb-1">{t('confirmDelete')}</h3>
+                                <p className="text-red-100 text-sm">{t('deleteWarning') || 'This action cannot be undone'}</p>
+                            </div>
+
+                            {/* Trade Details */}
+                            <div className="p-6 space-y-4">
+                                <div className="bg-gray-50 dark:bg-[#0d1117] rounded-xl p-4 border border-gray-200 dark:border-[#30363d]">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">Trading Pair</span>
+                                        <span className="font-bold text-gray-900 dark:text-white">{deleteModal.pair}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">Entry Price</span>
+                                        <span className="font-mono text-sm text-gray-900 dark:text-white">${formatPrice(deleteModal.entry)}</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-2.5 rounded-lg border border-amber-200 dark:border-amber-900/50">
+                                    <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                    <p>{t('deleteNote') || 'Deleting this trade will permanently remove all associated data including TP/SL levels and history.'}</p>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-3 pt-2">
+                                    <button
+                                        onClick={() => setDeleteModal(null)}
+                                        disabled={deleting}
+                                        className="flex-1 px-4 py-3 rounded-xl font-medium bg-gray-100 dark:bg-[#21262d] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#2d333b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {t('cancel') || 'Cancel'}
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                        className="flex-1 px-4 py-3 rounded-xl font-medium bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    >
+                                        {deleting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                {t('deleting') || 'Deleting...'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Trash2 className="w-4 h-4" />
+                                                {t('delete') || 'Delete'}
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

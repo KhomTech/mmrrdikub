@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // DB เป็นตัวแปร Global เอาไว้ให้ไฟล์อื่นเรียกใช้ (เช่น database.DB)
@@ -33,13 +35,35 @@ func ConnectDB() {
 		fmt.Println("✅ อ่านค่า DB_URL สำเร็จ! กำลังเชื่อมต่อ Neon...")
 	}
 
-	// 3. เชื่อมต่อ Database
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// 3. เชื่อมต่อ Database พร้อม Config ป้องกัน Timeout
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		// ลด Log level เพื่อประหยัด Resource
+		Logger: logger.Default.LogMode(logger.Warn),
+		// ปิด Prepared Statement เพื่อลด Connection overhead
+		PrepareStmt: false,
+	})
 	if err != nil {
 		log.Fatal("❌ เชื่อมต่อ Database ไม่ได้: ", err)
 	}
 
-	// 4. บันทึก Connection ลงตัวแปร Global
+	// 4. ตั้งค่า Connection Pool เพื่อป้องกัน Timeout
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal("❌ ไม่สามารถดึง SQL DB instance: ", err)
+	}
+
+	// Connection Pool Settings - สำคัญมากสำหรับ Production!
+	sqlDB.SetMaxIdleConns(5)                   // จำนวน Idle connections สูงสุด
+	sqlDB.SetMaxOpenConns(20)                  // จำนวน Connection สูงสุดที่เปิดได้
+	sqlDB.SetConnMaxLifetime(30 * time.Minute) // อายุสูงสุดของ Connection
+	sqlDB.SetConnMaxIdleTime(10 * time.Minute) // เวลา Idle สูงสุดก่อนปิด
+
+	// 5. Test Connection เพื่อให้แน่ใจว่าใช้งานได้
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatal("❌ Ping Database ไม่ได้: ", err)
+	}
+
+	// 6. บันทึก Connection ลงตัวแปร Global
 	DB = db
-	fmt.Println("🚀 Database Connected Successfully!")
+	fmt.Println("🚀 Database Connected Successfully! (Pool: 5-20 connections)")
 }

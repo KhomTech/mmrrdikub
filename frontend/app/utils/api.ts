@@ -96,7 +96,22 @@ export interface TradeStats {
 // Axios Instance
 // ============================================
 // 🔥 ใช้ Environment Variable สำหรับ Production
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const normalizeApiBaseUrl = (raw: string): string => {
+    const trimmed = raw.trim().replace(/\/+$/, '');
+    if (trimmed === '') {
+        return 'http://localhost:8080/api';
+    }
+
+    // รองรับทั้งแบบใส่ /api มาแล้ว และแบบใส่แค่ host
+    if (trimmed.endsWith('/api')) {
+        return trimmed;
+    }
+
+    return `${trimmed}/api`;
+};
+
+const RAW_API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_BASE_URL = normalizeApiBaseUrl(RAW_API_BASE_URL);
 
 const api = axios.create({
     baseURL: API_BASE_URL,

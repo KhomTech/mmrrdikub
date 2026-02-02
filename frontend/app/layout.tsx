@@ -29,6 +29,14 @@ export const metadata: Metadata = {
   title: "MMRRDiKub | Trading Journal Pro",
   description: "เครื่องมือคำนวณ Position Size และจดบันทึกการเทรดระดับมืออาชีพ พร้อมระบบ AI วิเคราะห์พฤติกรรมการเทรด",
   keywords: ["trading journal", "position size calculator", "crypto trading", "risk management"],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 // Layout หลัก - ครอบทุกหน้าในแอพ
@@ -38,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className="dark">
+    <html lang="th" suppressHydrationWarning>
       <body className={`${inter.variable} ${kanit.variable} font-sans antialiased`}>
         {/* LanguageProvider + ThemeProvider ครอบทุกอย่าง */}
         <LanguageProvider>

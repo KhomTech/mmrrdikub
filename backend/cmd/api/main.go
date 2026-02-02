@@ -38,9 +38,13 @@ func main() {
 	// ส่วนที่ 3: สร้าง Fiber App
 	// ============================================
 	app := fiber.New(fiber.Config{
-		AppName:      "MMRRDiKub API v1.0",
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		AppName:               "MMRRDiKub API v1.0",
+		ReadTimeout:           30 * time.Second,
+		WriteTimeout:          30 * time.Second,
+		IdleTimeout:           120 * time.Second,
+		DisableStartupMessage: false,
+		// ป้องกัน Prefork issues บน Render/Docker
+		Prefork: false,
 		// Error Handler แบบสวยๆ
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
@@ -125,6 +129,11 @@ func main() {
 	// Auth Routes (Public - ไม่ต้อง Login)
 	api.Post("/register", handlers.Register)
 	api.Post("/login", handlers.Login)
+
+	// Compatibility Routes (กันพลาด): ถ้า client ยิงมาแบบไม่มี /api
+	// เพื่อไม่ให้เจอ 404: POST /login หรือ POST /register
+	app.Post("/register", handlers.Register)
+	app.Post("/login", handlers.Login)
 
 	// Trade Routes (Protected - ต้อง Login)
 	trades := api.Group("/trades", handlers.JWTMiddleware)

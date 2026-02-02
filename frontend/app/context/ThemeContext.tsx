@@ -21,12 +21,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
     const [mounted, setMounted] = useState(false);
 
-    // โหลด theme จาก localStorage ตอนเปิดเว็บครั้งแรก
+    // บังคับเริ่มต้นเป็นธีมมืดเสมอ (อนาคตค่อยเปิดให้สลับ)
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
+        setTheme('dark');
         setMounted(true);
     }, []);
 
@@ -35,17 +32,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (!mounted) return;
 
         const root = document.documentElement;
-        if (theme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-        localStorage.setItem('theme', theme);
+        root.classList.add('dark');
+        // ไม่ต้องเขียน localStorage เพราะยังไม่ให้สลับธีม
     }, [theme, mounted]);
 
     // ฟังก์ชันสลับ theme - กดปุ่มแล้วสลับไปมา
     const toggleTheme = () => {
-        setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+        // ตอนนี้ยังไม่ให้สลับธีม (กัน UI/UX สับสน)
+        setTheme('dark');
     };
 
     // กัน hydration mismatch - รอจน mount เสร็จค่อยแสดง
