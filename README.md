@@ -4,7 +4,7 @@
 
 **MMRRDiKub** is a full-stack financial technology application designed to help traders manage risk, calculate position sizes, and journal their trades effectively. Built with modern web technologies, it emphasizes performance, security, and user experience.
 
-🔗 **Live Demo:** [https://mmrrdikub.vercel.app](https://mmrrdikub.vercel.app)  
+🔗 **Live Demo:** [https://mmrrdikub.vercel.app](https://mmrrdikub.xyz)  
 🔗 **API Endpoint:** [https://mmrrdikub.onrender.com](https://mmrrdikub.onrender.com)
 
 ---
