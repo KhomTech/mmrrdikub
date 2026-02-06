@@ -36,6 +36,11 @@
 - **🌍 Production Ready:** Deployed on scalable cloud infrastructure with CI/CD capabilities.
 
 ---
+## 📝 License
+This project is for **educational and portfolio purposes only**.
+© 2026 Akkaraphon (KhomTech). All Rights Reserved.
+
+Commercial use or redistribution of this code without permission is prohibited.
 
 ## 🚀 Getting Started
 
