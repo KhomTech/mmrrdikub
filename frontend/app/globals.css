@@ -7,6 +7,9 @@
 
 @import "tailwindcss";
 
+/* Force dark: variant to use .dark class instead of prefers-color-scheme */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* === CSS Variables for Theme === */
 :root {
   /* Light Mode Colors */

@@ -44,3 +44,13 @@ logs/
 tmp/
 temp/
 *.tmp
+
+# ============================================
+# 📄 Project Summary Docs (ไม่ต้องขึ้น GitHub)
+# ============================================
+MMRRDiKub_Phase*.md
+MMRRDiKub_Project_Story_Script.md
+Phase*.md
+phase*.md
+.windsurfrules
+push_to_github.bat

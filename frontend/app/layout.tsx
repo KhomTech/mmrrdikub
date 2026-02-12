@@ -46,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang="th" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${kanit.variable} font-sans antialiased`}>
         {/* LanguageProvider + ThemeProvider ครอบทุกอย่าง */}
         <LanguageProvider>

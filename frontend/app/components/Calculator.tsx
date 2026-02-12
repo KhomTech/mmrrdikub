@@ -913,21 +913,22 @@ export default function Calculator() {
                                         <span className="text-xs text-gray-500 dark:text-gray-500 w-6">TP{idx + 1}</span>
                                         <div className="flex-1 relative">
                                             <input
-                                                type="number" step="any"
+                                                type="number" step="any" max="999999999"
                                                 placeholder={inputs.side === 'LONG' ? t('aboveEntry') : t('belowEntry')}
                                                 value={tp.price || ''}
                                                 onChange={(e) => {
                                                     const levels = [...inputs.tpLevels];
                                                     let newPrice = parseFloat(e.target.value) || 0;
 
-                                                    // Validate: TP ต้องไม่เกิน 100x entry price (ป้องกัน overflow)
-                                                    const maxTP = inputs.side === 'LONG'
-                                                        ? inputs.entryPrice * 100
-                                                        : inputs.entryPrice * 0.01;
-
-                                                    if (newPrice > maxTP && inputs.entryPrice > 0) {
-                                                        console.warn(`⚠️ TP too high: ${newPrice} > max ${maxTP.toFixed(2)}`);
-                                                        newPrice = maxTP;
+                                                    // Validate: TP ต้องไม่เกิน limit (ป้องกัน overflow)
+                                                    // LONG: TP อยู่เหนือ entry → cap ที่ 1000x
+                                                    // SHORT: TP อยู่ใต้ entry → ไม่ต้อง cap (ผู้ใช้กรอกราคาต่ำกว่า entry)
+                                                    if (inputs.side === 'LONG' && inputs.entryPrice > 0) {
+                                                        const maxTP = inputs.entryPrice * 1000;
+                                                        if (newPrice > maxTP) {
+                                                            console.warn(`⚠️ TP too high: ${newPrice} > max ${maxTP.toFixed(2)}`);
+                                                            newPrice = maxTP;
+                                                        }
                                                     }
 
                                                     levels[idx].price = newPrice;
@@ -1131,7 +1132,7 @@ export default function Calculator() {
                                 -${formatPrice(calculation.maxLossWithFee)}
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
-                                Risk + Fee
+                                {inputs.portfolio > 0 ? `${((calculation.maxLossWithFee / inputs.portfolio) * 100).toFixed(2)}% of Portfolio` : 'Risk + Fee'}
                             </div>
                         </div>
                         <div className="bg-gray-50 dark:bg-[#161b22] rounded-xl p-3 sm:p-4 border border-green-200 dark:border-green-600/50">
@@ -1140,7 +1141,7 @@ export default function Calculator() {
                                 +${formatPrice(calculation.maxWinAfterFee)}
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
-                                After Fee
+                                {inputs.portfolio > 0 ? `+${((calculation.maxWinAfterFee / inputs.portfolio) * 100).toFixed(2)}% of Portfolio` : 'After Fee'}
                             </div>
                         </div>
                     </div>
