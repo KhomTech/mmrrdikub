@@ -31,7 +31,7 @@ COPY . .
 # Build binary
 # CGO_ENABLED=0 = ไม่ใช้ C libraries (ทำให้ binary เล็กลง)
 # GOOS=linux = build สำหรับ Linux
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/api/
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/api/
 
 # ╔════════════════════════════════════════╗
 # ║      STAGE 2: RUNTIME (เล็กมาก)        ║
