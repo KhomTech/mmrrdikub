@@ -11,7 +11,7 @@
 # ║  - Compile เป็น Binary                 ║
 # ╚════════════════════════════════════════╝
 
-FROM golang:1.22-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 # ติดตั้ง Git (บาง package ต้องใช้)
 RUN apk add --no-cache git
