@@ -138,7 +138,16 @@ const baseTranslations = {
     riskMgmtDesc: 'Calculate optimal position size',
     tradeJournal: 'Trade Journal',
     tradeJournalDesc: 'Track all your trades',
+    aiChatbot: 'AI Terminal Chat',
+    aiChatbotDesc: 'Consult AI on live market trends',
     quickActions: 'Quick Actions',
+
+    // AI Chat & Tooltips
+    aiTradingAnalyst: 'AI Trading Analyst',
+    liveMarketActive: 'Live Market & RAG Engine Active',
+    aiGreeting: 'Hello Pro Trader! 👋 I am your AI Risk Analyst. Ask me about market setups or your trade plans.',
+    aiPlaceholder: 'Ask about coins, logic, or news...',
+    sendPlanToAI: 'Send the current trading plan to the AI Trading Assistant below for an in-depth risk analysis',
     // Dashboard
     tradeHistory: 'Trade History',
     viewHistory: 'View History',
@@ -299,7 +308,16 @@ const createDictionary = () => {
         exchange: 'Exchange', selectExchange: 'เลือก Exchange',
         riskMgmt: 'Risk Management', riskMgmtDesc: 'คำนวณขนาดไม้ที่เหมาะสม',
         tradeJournal: 'Trade Journal', tradeJournalDesc: 'บันทึกและติดตามประวัติ',
+        aiChatbot: 'AI Terminal Chat', aiChatbotDesc: 'เพื่อนคู่คิดนักเทรด (มี RAG ล่าสุด)',
         quickActions: 'Quick Actions',
+
+        // AI Chat & Tooltips
+        aiTradingAnalyst: 'AI Risk Analyst',
+        liveMarketActive: 'Live Market & RAG Engine Active',
+        aiGreeting: 'สวัสดีครับยอดนักเทรด! 👋 ผมคือ AI Trading Assistant อยากให้ผมช่วยวิเคราะห์ตลาดวันนี้ หรือปรึกษาแผนการเทรด พิมพ์ถามมาได้เลยครับ!',
+        aiPlaceholder: 'พิมพ์ถามเรื่องเหรียญ, แผนเทรด, ข่าวสารเศรษฐกิจ...',
+        sendPlanToAI: 'ส่งแผนเทรดปัจจุบันไปให้ AI ด้านล่างช่วยประเมินความเสี่ยงล่วงหน้า',
+        analyzeTradeWithAI: 'ส่งให้ AI ช่วยวิเคราะห์อย่างละเอียด',
         tradeHistory: 'ประวัติการเทรด', viewHistory: 'ดูประวัติ', totalTrades: 'เทรดทั้งหมด',
         winRate: 'Win Rate', totalPnl: 'Total PnL', openTrades: 'เทรดเปิด',
         wins: 'ชนะ', losses: 'แพ้', noTrades: 'ยังไม่มีประวัติเทรด', startTrading: 'เริ่มเทรดเลย!',
@@ -362,7 +380,16 @@ const createDictionary = () => {
         exchange: 'Exchange', selectExchange: '选择交易所',
         riskMgmt: 'Risk Management', riskMgmtDesc: '计算最佳仓位大小',
         tradeJournal: 'Trade Journal', tradeJournalDesc: '记录交易历史',
+        aiChatbot: 'AI Terminal Chat', aiChatbotDesc: 'AI 交易分析员',
         quickActions: '快捷操作',
+
+        // AI Chat & Tooltips
+        aiTradingAnalyst: 'AI 风险分析师',
+        liveMarketActive: '实时市场与RAG引擎已激活',
+        aiGreeting: '你好，专业交易员！👋 我是你的AI交易助手。想了解今日行情或交易计划，请随时提问！',
+        aiPlaceholder: '询问代币、逻辑或新闻...',
+        sendPlanToAI: '将当前交易计划发送给下方的AI助手进行深度风险评估',
+        analyzeTradeWithAI: '发给AI进行详细分析',
         tradeHistory: '交易历史', viewHistory: '查看历史', totalTrades: '总交易数',
         winRate: 'Win Rate', totalPnl: 'Total PnL', openTrades: '持仓中',
         wins: '盈利', losses: '亏损', noTrades: '暂无交易记录', startTrading: '开始交易!',

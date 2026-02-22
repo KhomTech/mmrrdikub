@@ -115,7 +115,7 @@ const API_BASE_URL = normalizeApiBaseUrl(RAW_API_BASE_URL);
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 60000,  // 60 วินาที (AI อาจใช้เวลา 15-30 วิ ถ้าโดน retry)
     headers: {
         'Content-Type': 'application/json',
     },
@@ -218,6 +218,59 @@ export const tradeAPI = {
     delete: (id: number) => {
         console.log('🗑️ Deleting trade:', id);
         return api.delete(`/trades/${id}`);
+    },
+};
+
+// ============================================
+// AI API - ฟีเจอร์ AI Risk Analyst (ใหม่!)
+// ============================================
+// Interface สำหรับส่งข้อมูลไปวิเคราะห์
+export interface AnalyzeTradePayload {
+    coin: string;
+    entry: number;
+    sl: number;
+    tp: number;
+    side: string;
+    fallback?: boolean;  // true = ข้าม Gemini ใช้ข้อมูลจริงเลย
+}
+
+// Interface สำหรับรับผลวิเคราะห์กลับมา
+export interface AIAnalysisResult {
+    status: string;         // 'success' | 'quota_exceeded'
+    source: string;         // 'gemini' | 'fallback'
+    coin: string;
+    analysis: string;
+    history_count: number;
+    gemini_error?: string;  // ถ้า quota exceeded จะมี error message
+}
+
+export interface AIChatMessage {
+    role: "user" | "assistant";
+    content: string;
+}
+
+export interface AIChatResult {
+    status: string;         // 'success'
+    source: string;         // 'gemini' | 'fallback'
+    reply: string;
+}
+
+export const aiAPI = {
+    // ส่งแผนเทรดไปให้ AI วิเคราะห์
+    analyze: (data: AnalyzeTradePayload) => {
+        console.log('🤖 Sending to AI Analyst:', data.coin, data.side);
+        return api.post<AIAnalysisResult>('/ai/analyze', data);
+    },
+
+    // คุยกับ AI Trading Assistant
+    chat: (data: { messages: AIChatMessage[], language?: string }) => {
+        console.log('💬 Sending chat to AI Assistant');
+        return api.post<AIChatResult>('/ai/chat', data);
+    },
+    // ดึง AI Insights สรุปพฤติกรรม User
+    getInsights: () => {
+        console.log('🤖 Fetching recent trade behavior insights from AI...');
+        return api.get<{ insights: import('../components/AIInsights').Insight[] }>('/ai/insights');
     },
 };
 

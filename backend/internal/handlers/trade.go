@@ -362,17 +362,17 @@ func GetTrades(c *fiber.Ctx) error {
 		OpenCount int64   `json:"open_count"`
 		AvgRR     float64 `json:"avg_rr"`
 	}
-	
+
 	// คำนวณ Total PnL จากทุก trade ที่ปิดแล้ว (WIN, LOSS, BREAK_EVEN)
 	database.DB.Model(&Trade{}).
 		Where("user_id = ? AND status IN (?)", userID, []string{"WIN", "LOSS", "BREAK_EVEN"}).
 		Select("COALESCE(SUM(pnl), 0) as total_pnl, COALESCE(AVG(risk_reward_ratio), 0) as avg_rr").
 		Scan(&stats)
-	
+
 	database.DB.Model(&Trade{}).Where("user_id = ? AND status = ?", userID, "WIN").Count(&stats.WinCount)
 	database.DB.Model(&Trade{}).Where("user_id = ? AND status = ?", userID, "LOSS").Count(&stats.LossCount)
 	database.DB.Model(&Trade{}).Where("user_id = ? AND status = ?", userID, "OPEN").Count(&stats.OpenCount)
-	
+
 	log.Printf("📊 Stats for user %d: Total PnL=%.2f, Win=%d, Loss=%d, Open=%d", userID, stats.TotalPnL, stats.WinCount, stats.LossCount, stats.OpenCount)
 
 	return c.JSON(fiber.Map{

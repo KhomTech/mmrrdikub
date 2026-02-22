@@ -11,8 +11,9 @@ import { useLanguage } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Calculator from './components/Calculator';
 import PriceTicker from './components/PriceTicker';
+import AiChat from './components/AiChat';
 import Link from 'next/link';
-import { Lock, BarChart3, TrendingUp, User, Star } from 'lucide-react';
+import { Lock, BarChart3, TrendingUp, User, Star, Bot } from 'lucide-react';
 
 function HomeContent() {
   const { t } = useLanguage();
@@ -93,12 +94,27 @@ function HomeContent() {
           <Calculator />
         </motion.section>
 
+        {/* AI Chat Assistant - ONLY SHOW WHEN LOGGED IN */}
+        <AnimatePresence>
+          {isLoggedIn && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ delay: 0.45 }}
+              className="mb-8"
+            >
+              <AiChat />
+            </motion.section>
+          )}
+        </AnimatePresence>
+
         {/* Features Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12"
         >
           <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-green-600/50 transition-all">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-600/20 flex items-center justify-center mb-3 sm:mb-4">
@@ -122,6 +138,14 @@ function HomeContent() {
             </div>
             <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('aiScore')}</h3>
             <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('aiScoreDesc')}</p>
+          </div>
+
+          <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-emerald-500/50 transition-all shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-3 sm:mb-4">
+              <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('aiChatbot')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('aiChatbotDesc')}</p>
           </div>
         </motion.section>
 

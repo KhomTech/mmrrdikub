@@ -5,10 +5,10 @@
  * ✅ Multi-Language Support + Theme Support + Number Validation
  */
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { tradeAPI } from '../utils/api';
+import { tradeAPI, aiAPI } from '../utils/api';
 import { formatPrice, formatUSD, formatPercent } from '../utils/format';
 import { calculateTradeMetrics, formatRR } from '../utils/tradeCalculations';
 import { cn } from '../lib/cn';
@@ -247,8 +247,24 @@ export default function Calculator() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [error, setError] = useState('');
 
+    // ============================================
+    // 🤖 AI Analyst State
+    // ============================================
+    // isLoggedIn - เช็คว่า User Login อยู่หรือเปล่า
+    // วิธีเช็ค: ดูว่ามี token ใน localStorage มั้ย
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [aiLoading, setAiLoading] = useState(false);    // กำลังรอ AI ตอบอยู่
+    const [aiResult, setAiResult] = useState<string>(''); // ผลวิเคราะห์จาก AI
+    const [aiError, setAiError] = useState<string>('');   // Error message ถ้ามี
+    const [aiHistoryCount, setAiHistoryCount] = useState(0); // วิเคราะห์จากกี่ไม้
+    const [aiSource, setAiSource] = useState<string>(''); // 'gemini' หรือ 'fallback'
+
     // 🔥 โหลดข้อมูลจาก localStorage ถ้ามี (Guest Data Persistence)
     useEffect(() => {
+        // เช็ค Login status ตอน Component โหลด
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token); // !! = แปลง string เป็น boolean (มีค่า = true, ไม่มี = false)
+
         const savedData = localStorage.getItem('tempTradeData');
         if (savedData) {
             try {
@@ -585,6 +601,51 @@ export default function Calculator() {
     );
 
     const canSave = inputs.entryPrice > 0 && tpTotal === 100 && slTotal === 100 && calculation.positionSize > 0;
+
+    // ============================================
+    // 🤖 AI Analyst: ฟังก์ชันส่งข้อมูลไปวิเคราะห์
+    // ============================================
+    // handleAnalyzeAI - เรียกเมื่อกดปุ่ม "วิเคราะห์ด้วย AI"
+    const handleAnalyzeAI = useCallback(async (useFallback = false) => {
+        if (!inputs.entryPrice || inputs.entryPrice <= 0) {
+            setAiError('กรุณากรอกราคาเข้า (Entry Price) ก่อนวิเคราะห์');
+            return;
+        }
+        const slPrice = inputs.slLevels[0]?.price || 0;
+        const tpPrice = inputs.tpLevels[0]?.price || 0;
+
+        setAiLoading(true);
+        setAiResult('');
+        setAiError('');
+        setAiSource('');
+
+        try {
+            const response = await aiAPI.analyze({
+                coin: inputs.pair,
+                entry: inputs.entryPrice,
+                sl: slPrice,
+                tp: tpPrice,
+                side: inputs.side,
+                fallback: useFallback,
+            });
+
+            // Backend ตอบ 200 เสมอ! (ไม่มี error อีกแล้ว)
+            setAiResult(response.data.analysis);
+            setAiHistoryCount(response.data.history_count);
+            setAiSource(response.data.source || 'fallback');
+
+            if (response.data.status === 'quota_exceeded') {
+                console.log('⚠️ Gemini quota exceeded, using fallback');
+            } else {
+                console.log('✅ AI Analysis from:', response.data.source);
+            }
+        } catch (err: any) {
+            console.error('❌ AI error:', err);
+            setAiError('ไม่สามารถเชื่อมต่อ Backend ได้ ลองรีเฟรชหน้าเว็บ');
+        } finally {
+            setAiLoading(false);
+        }
+    }, [inputs]);
 
     return (
         <div className="bg-white dark:bg-[#0d1117] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[#30363d] shadow-2xl transition-colors duration-300">
@@ -1251,6 +1312,46 @@ export default function Calculator() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* ============================================ */}
+            {/* 🤖 ส่งแผนให้ AI วิเคราะห์ (Hacker / Emerald Theme) */}
+            {/* ============================================ */}
+            <div className="mt-8 pt-6 border-t border-emerald-500/10">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <Brain className="w-6 h-6 text-emerald-500 animate-pulse" />
+                        <h3 className="font-bold text-gray-900 dark:text-emerald-50 tracking-wide">AI Risk Analyst</h3>
+                    </div>
+                </div>
+
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-5 font-mono">
+                    <span className="text-emerald-500/80 mr-1">[{'>'}]</span> {t('sendPlanToAI')}
+                </p>
+
+                <button
+                    onClick={() => {
+                        if (!inputs.entryPrice || inputs.entryPrice <= 0) {
+                            setError('กรุณากรอกราคาเข้า (Entry Price) ก่อนวิเคราะห์');
+                            return;
+                        }
+                        const prompt = `ช่วยวิเคราะห์แผนเทรดนี้ให้หน่อยครับ:\nคู่เทรด: ${inputs.pair} (${inputs.side})\nจุดเข้า: ${inputs.entryPrice}\nSL: ${inputs.slLevels[0]?.price || 0}\nTP: ${inputs.tpLevels[0]?.price || 0}\nเงินทุน: $${inputs.portfolio}\nความเสี่ยง: ${inputs.riskPercent}%\nLeverage: ${inputs.leverage}x`;
+                        window.dispatchEvent(new CustomEvent('sendToChat', { detail: prompt }));
+                    }}
+                    disabled={!isLoggedIn}
+                    className={cn(
+                        "w-full py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 font-mono",
+                        !isLoggedIn
+                            ? "bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed border border-gray-300 dark:border-gray-800"
+                            : "bg-emerald-600 hover:bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] active:scale-95 border hover:border-emerald-400"
+                    )}
+                >
+                    {!isLoggedIn ? (
+                        <><span>🔒</span><span>ต้อง Login ก่อนใช้งาน AI</span></>
+                    ) : (
+                        <><Brain className="w-5 h-5 text-black" /><span>{typeof t === 'function' && t('analyzeTradeWithAI') ? t('analyzeTradeWithAI') : 'ส่งให้ AI ช่วยวิเคราะห์อย่างละเอียด'}</span></>
+                    )}
+                </button>
+            </div>
         </div>
     );
 }

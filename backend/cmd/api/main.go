@@ -143,6 +143,13 @@ func main() {
 	trades.Put("/:id", handlers.UpdateTrade)
 	trades.Delete("/:id", handlers.DeleteTrade)
 
+	// AI Routes (Protected - ต้อง Login)
+	// เส้นทางสำหรับฟีเจอร์ AI Risk Analyst และ Chatbot
+	aiRoutes := api.Group("/ai", handlers.JWTMiddleware)
+	aiRoutes.Post("/analyze", handlers.AnalyzeTrade)  // POST /api/ai/analyze
+	aiRoutes.Post("/chat", handlers.AIChat)           // POST /api/ai/chat
+	aiRoutes.Get("/insights", handlers.GetAIInsights) // GET /api/ai/insights
+
 	// ============================================
 	// ส่วนที่ 7: 404 Handler
 	// ============================================
@@ -164,10 +171,11 @@ func main() {
 	log.Println("📍 Frontend URL: http://localhost:3000")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	log.Println("📌 API Endpoints:")
-	log.Println("   POST /api/register  - สมัครสมาชิก")
-	log.Println("   POST /api/login     - เข้าสู่ระบบ")
-	log.Println("   POST /api/trades    - สร้างเทรด (Auth)")
-	log.Println("   GET  /api/trades    - ดูประวัติ (Auth)")
+	log.Println("   POST /api/register     - สมัครสมาชิก")
+	log.Println("   POST /api/login        - เข้าสู่ระบบ")
+	log.Println("   POST /api/trades       - สร้างเทรด (Auth)")
+	log.Println("   GET  /api/trades       - ดูประวัติ (Auth)")
+	log.Println("   POST /api/ai/analyze   - AI Risk Analyst (Auth) 🤖")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
 	// 🔥 FIX #3: Listen บน 0.0.0.0 เพื่อรับ Connection จากทุก Interface
