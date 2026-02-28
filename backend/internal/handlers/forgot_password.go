@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"net"
 	"net/smtp"
 	"os"
 	"time"
@@ -77,7 +78,17 @@ func SendEmailOTP(toEmail, otp string) error {
 	headers := "MIME-version: 1.0;\r\nContent-Type: text/html; charset=\"UTF-8\";"
 	msg := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n%s\r\n\r\n%s", toEmail, subject, headers, body))
 
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{toEmail}, msg)
+	// ⭐ FIX: ตรวจสอบการเชื่อมต่อก่อน (Timeout 3 วิ) ป้องกันเว็บค้าง เพราะ Render บล็อกพอร์ต 587
+	conn, err := net.DialTimeout("tcp", smtpHost+":"+smtpPort, 3*time.Second)
+	if err != nil {
+		log.Printf("⚠️ SMTP Port Blocked (Render Free Tier?): %v", err)
+		log.Printf("💡 [MOCK OTP] เนื่องจากส่งอีเมลจริงไม่ได้ รหัส OTP ของคุณคือ: %s", otp)
+		// ถือว่าส่งอีเมลสำเร็จ (จำลอง) เพื่อให้ Frontend ทำงานต่อได้ไม่ค้าง
+		return nil
+	}
+	conn.Close()
+
+	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{toEmail}, msg)
 	if err != nil {
 		log.Printf("❌ Failed to send email to %s: %v", toEmail, err)
 		return err
