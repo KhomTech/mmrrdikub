@@ -981,6 +981,8 @@ export default function Calculator() {
                                                     const levels = [...inputs.tpLevels];
                                                     let newPrice = parseFloat(e.target.value) || 0;
 
+<<<<<<< C:/Users/Akkaraphon/mmrrdikub/frontend/app/components/Calculator.tsx
+<<<<<<< C:/Users/Akkaraphon/mmrrdikub/frontend/app/components/Calculator.tsx
                                                     // Validate: TP ต้องไม่เกิน limit (ป้องกัน overflow)
                                                     // LONG: TP อยู่เหนือ entry → cap ที่ 1000x
                                                     // SHORT: TP อยู่ใต้ entry → ไม่ต้อง cap (ผู้ใช้กรอกราคาต่ำกว่า entry)
@@ -990,6 +992,18 @@ export default function Calculator() {
                                                             console.warn(`⚠️ TP too high: ${newPrice} > max ${maxTP.toFixed(2)}`);
                                                             newPrice = maxTP;
                                                         }
+=======
+=======
+>>>>>>> C:/Users/Akkaraphon/.windsurf/worktrees/mmrrdikub/mmrrdikub-2967fb76/frontend/app/components/Calculator.tsx
+                                                    // Validate: TP ต้องไม่เกิน 1000x entry price (ป้องกัน overflow)
+                                                    const maxTP = inputs.side === 'LONG'
+                                                        ? inputs.entryPrice * 1000
+                                                        : inputs.entryPrice * 0.001;
+
+                                                    if (newPrice > maxTP && inputs.entryPrice > 0) {
+                                                        console.warn(`⚠️ TP too high: ${newPrice} > max ${maxTP.toFixed(2)}`);
+                                                        newPrice = maxTP;
+>>>>>>> C:/Users/Akkaraphon/.windsurf/worktrees/mmrrdikub/mmrrdikub-2967fb76/frontend/app/components/Calculator.tsx
                                                     }
 
                                                     levels[idx].price = newPrice;
