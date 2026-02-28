@@ -106,6 +106,16 @@ export default function ForgotPasswordPage() {
                         <div className="text-center mt-4">
                             <Link href="/login" className="text-sm text-green-600/70 hover:text-green-400 transition-all underline">Back to Login</Link>
                         </div>
+
+                        {/* ℹ️ Helper text explaining Render free tier limitations */}
+                        <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                            <h4 className="text-yellow-500 text-sm font-bold mb-2">⚠️ แจ้งเตือนเรื่องการส่งอีเมล</h4>
+                            <p className="text-gray-400 text-xs leading-relaxed">
+                                ระบบสามารถส่งอีเมล OTP ได้จริงเมื่อรันแบบ Localhost แต่เนื่องจาก Production ปัจจุบันโฮสต์บนบริการฟรีของ Render ซึ่ง <strong className="text-yellow-400">บล็อกพอร์ตส่งอีเมล (Port 587)</strong> ทำให้ไม่สามารถส่งอีเมลออกไปได้
+                                <br /><br />
+                                เพื่อการทดสอบระบบ Password Reset <strong>ระบบจำลองจะแจ้งรหัส OTP ผ่านทาง Server Console แทน</strong> หากต้องการทดสอบแบบส่งอีเมลจริง หรือสนใจรับผู้พัฒนาเข้าทำงาน โปรดติดต่อ <a href="mailto:akkaraphon7tech@gmail.com" className="text-blue-400 underline">akkaraphon7tech@gmail.com</a>
+                            </p>
+                        </div>
                     </form>
                 )}
 
@@ -126,6 +136,18 @@ export default function ForgotPasswordPage() {
                                 {countdown > 0 ? `Resend OTP in ${countdown}s` : "Resend OTP"}
                             </button>
                             <button type="button" onClick={() => setStep(1)} className="block w-full text-sm text-green-600/70 hover:text-green-400 transition-all underline">Go back</button>
+                        </div>
+
+                        {/* 📷 Proof image showing that Email OTP actually works on local */}
+                        <div className="mt-6 border border-gray-700 rounded-xl overflow-hidden shadow-lg shadow-black/50">
+                            <div className="bg-gray-800 px-3 py-2 text-xs text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                <span>หลักฐานการส่ง Email OTP (Localhost)</span>
+                            </div>
+                            <img
+                                src="/mmrrdikubotp.jpg"
+                                alt="Email OTP Notification Proof"
+                                className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity"
+                            />
                         </div>
                     </form>
                 )}

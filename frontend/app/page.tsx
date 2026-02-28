@@ -137,7 +137,6 @@ function HomeContent() {
               <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-500" />
             </div>
             <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-900 dark:text-white">{t('aiScore')}</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">{t('aiScoreDesc')}</p>
           </div>
 
           <div className="bg-white dark:bg-[var(--surface)] rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-[var(--border)] hover:border-emerald-500/50 transition-all shadow-[0_0_15px_rgba(16,185,129,0.05)]">
@@ -168,13 +167,9 @@ function HomeContent() {
                 <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
               </motion.div>
 
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-gray-900 dark:text-white">
                 {t('unlockFeatures')}
               </h2>
-
-              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto mb-6 sm:mb-8">
-                {t('ctaDesc')}
-              </p>
 
               <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
                 {[
@@ -233,9 +228,21 @@ function HomeContent() {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-500 border-t border-[#30363d]">
+      <footer className="py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-500 border-t border-[#30363d] relative">
         <p>Made with 💚 by akkaraphon7tech@gmail.com</p>
         <p className="mt-1">{t('footer')} | © 2026</p>
+
+        {/* Developer Portfolio Link */}
+        <a
+          href="https://resumeakkaraphon.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-4 right-4 sm:bottom-6 sm:right-8 flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-accent/20 border border-green-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full hover:bg-green-500/20 hover:border-green-400 transition-all group"
+        >
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          <span className="text-gray-300 group-hover:text-green-400 font-medium transition-colors">Developer Profile</span>
+          <span className="text-green-500 group-hover:translate-x-1 transition-transform">→</span>
+        </a>
       </footer>
     </div>
   );
