@@ -183,6 +183,9 @@ function LoginContent() {
                                 {t('register')} <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                             </Link>
                         </div>
+                        <Link href="/forgot-password" className="text-xs sm:text-sm text-accent hover:underline transition-all block">
+                            ลืมรหัสผ่าน? (Forgot Password)
+                        </Link>
                         <Link href="/" className="text-xs sm:text-sm text-muted hover:text-accent transition-all block">
                             ← Back
                         </Link>

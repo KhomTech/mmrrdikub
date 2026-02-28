@@ -21,13 +21,15 @@ import (
 // GORM จะสร้าง Table "users" ให้อัตโนมัติ
 // 🔥 FIX: ใช้ gorm tag "column" ให้ตรงกับ schema.sql
 type User struct {
-	ID        uint           `gorm:"primaryKey" json:"id"`
-	Username  string         `gorm:"uniqueIndex;size:50;not null" json:"username"`
-	Email     string         `gorm:"uniqueIndex;size:100;not null" json:"email"` // 🔥 ADDED: email field
-	Password  string         `gorm:"column:password_hash;not null" json:"-"`     // 🔥 FIX: column ชื่อ password_hash
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+	ID                uint           `gorm:"primaryKey" json:"id"`
+	Username          string         `gorm:"uniqueIndex;size:50;not null" json:"username"`
+	Email             string         `gorm:"uniqueIndex;size:100;not null" json:"email"` // 🔥 ADDED: email field
+	Password          string         `gorm:"column:password_hash;not null" json:"-"`     // 🔥 FIX: column ชื่อ password_hash
+	ResetOTP          *string        `gorm:"type:varchar(6)" json:"-"`
+	ResetOTPExpiresAt *time.Time     `json:"-"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 // ============================================

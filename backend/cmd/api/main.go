@@ -130,6 +130,10 @@ func main() {
 	api.Post("/register", handlers.Register)
 	api.Post("/login", handlers.Login)
 
+	api.Post("/auth/forgot-password/request", handlers.ForgotPasswordRequest)
+	api.Post("/auth/forgot-password/verify", handlers.ForgotPasswordVerify)
+	api.Post("/auth/forgot-password/reset", handlers.ForgotPasswordReset)
+
 	// Compatibility Routes (กันพลาด): ถ้า client ยิงมาแบบไม่มี /api
 	// เพื่อไม่ให้เจอ 404: POST /login หรือ POST /register
 	app.Post("/register", handlers.Register)
@@ -173,6 +177,7 @@ func main() {
 	log.Println("📌 API Endpoints:")
 	log.Println("   POST /api/register     - สมัครสมาชิก")
 	log.Println("   POST /api/login        - เข้าสู่ระบบ")
+	log.Println("   POST /api/auth/forgot-password/* - ลืมรหัสผ่าน")
 	log.Println("   POST /api/trades       - สร้างเทรด (Auth)")
 	log.Println("   GET  /api/trades       - ดูประวัติ (Auth)")
 	log.Println("   POST /api/ai/analyze   - AI Risk Analyst (Auth) 🤖")

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage, languages } from '../context/LanguageContext';
 import { cn } from '../lib/cn';
-import { User, Wallet, LogOut, ChevronDown, BarChart3, Search, X } from 'lucide-react';
+import { User, Wallet, LogOut, ChevronDown, BarChart3, Search, X, Key } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
@@ -252,6 +252,17 @@ export default function Navbar() {
                                     )}>
                                         <BarChart3 className="w-4 h-4" />
                                     </span>
+                                </Link>
+
+                                <Link href="/forgot-password">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="flex items-center gap-1 p-1.5 sm:px-2 sm:py-1 rounded-lg text-xs font-medium bg-amber-500/20 text-amber-500 hover:bg-amber-500/30 transition-all"
+                                    >
+                                        <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                        <span className="hidden lg:inline">เปลี่ยนรหัส</span>
+                                    </motion.button>
                                 </Link>
 
                                 <motion.button

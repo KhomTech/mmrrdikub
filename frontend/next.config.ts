@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // ปิด ESLint errors ระหว่าง Build (แก้ Vercel fail)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Removed unsupported eslint config
   // ปิด TypeScript errors ระหว่าง Build (ถ้ามี)
   typescript: {
     ignoreBuildErrors: true,
