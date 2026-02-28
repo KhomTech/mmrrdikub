@@ -25,6 +25,13 @@ var (
 		Time time.Time
 	})
 	newsCacheMutex sync.Mutex
+
+	// Cache สำหรับเก็บราคาเหรียญ real-time (เก็บไว้ 1 นาที เพื่อไม่ยิง Binance ถี่เกินไป)
+	priceCache = make(map[string]struct {
+		Price float64
+		Time  time.Time
+	})
+	priceCacheMutex sync.Mutex
 )
 
 // ============================================
@@ -99,6 +106,9 @@ func AnalyzeTrade(c *fiber.Ctx) error {
 	// 4. ดึงข่าวจริงผ่าน RAG Pipeline
 	newsData := fetchCryptoNews(req.Coin)
 
+	// 5. ดึงราคา Real-time จาก Binance API (อันนี้คือจุดสำคัญ! ถ้าไม่มี AI จะมัดมือมั่วราคาเอง)
+	livePrice := fetchLivePrice(req.Coin)
+
 	// แปลงภาษาของ User (ถ้ามี)
 	langStr := "th" // ค่าเริ่มต้นภาษาไทย
 	if langFromHeader := c.Get("Accept-Language"); strings.HasPrefix(langFromHeader, "en") {
@@ -109,6 +119,7 @@ func AnalyzeTrade(c *fiber.Ctx) error {
 
 	prompt := fmt.Sprintf(`คุณคือ AI Risk Manager ประจำแพลตฟอร์ม MMRRDiKub วิเคราะห์สั้นๆ (ไม่เกิน 3 ย่อหน้า)
 เหรียญ %s ฝั่ง %s: เข้า: %v, SL: %v, TP: %v
+💰 ราคาตลาดปัจจุบัน (Real-time จาก Binance): %s
 ประวัติของ User นี้: %s
 ข่าวร้อนแรงของเหรียญนี้ ณ ตอนนี้:
 %s
@@ -116,8 +127,9 @@ func AnalyzeTrade(c *fiber.Ctx) error {
 คำสั่งจำเพาะ: 
 - ตอบเป็นภาษา "%s" เท่านั้น
 - พิมพ์ให้อ่านง่าย มีการใช้อิโมจิ (Emojis) แทรกอย่างพอดี แต่อย่ารกจนเกินไป
-- วิเคราะห์ความเสี่ยงและโอกาสโดน SL แบบดุดันเตือนสติ สไตล์เซียนเทรดวัยรุ่นลงทุน`,
-		req.Coin, req.Side, req.Entry, req.SL, req.TP, history, newsData, langStr)
+- วิเคราะห์ความเสี่ยงและโอกาสโดน SL แบบดุดันเตือนสติ สไตล์เซียนเทรดวัยรุ่นลงทุน
+- ใช้ราคาตลาดปัจจุบันที่ให้ไว้ข้างบนในการวิเคราะห์ ห้ามมั่วราคาเองเด็ดขาด`,
+		req.Coin, req.Side, req.Entry, req.SL, req.TP, livePrice, history, newsData, langStr)
 
 	// ลำดับ 1: ลอง Gemini
 	apiKey := os.Getenv("GEMINI_API_KEY")
@@ -411,4 +423,66 @@ func fetchCryptoNews(coin string) string {
 	newsCacheMutex.Unlock()
 
 	return newsContext // โยนกลับไปให้ AnalyzeTrade หรือ GetAIInsights เอาไปประมวลผลต่อ
+}
+
+// ----------------------------------------------------
+// fetchLivePrice - ดึงราคา Real-time จาก Binance API (ฟรี ไม่ต้อง API Key!)
+// เก็บ Cache ไว้ 1 นาที เพื่อไม่ให้ยิงถี่เกินไปจนโดนแบน
+// ----------------------------------------------------
+func fetchLivePrice(coin string) string {
+	// แปลง BTC/USDT -> BTCUSDT (format ที่ Binance ต้องการ)
+	symbol := strings.ReplaceAll(coin, "/", "")
+	if symbol == "" {
+		return "ไม่สามารถดึงราคาได้ (ไม่ได้ระบุเหรียญ)"
+	}
+
+	// เช็ค Cache ก่อน (เก็บ 1 นาที)
+	priceCacheMutex.Lock()
+	if cache, exists := priceCache[symbol]; exists {
+		if time.Since(cache.Time) < 1*time.Minute {
+			priceCacheMutex.Unlock()
+			return fmt.Sprintf("$%.2f USD", cache.Price)
+		}
+	}
+	priceCacheMutex.Unlock()
+
+	// ยิง Binance Public API (ฟรี ไม่ต้องลงทะเบียน)
+	url := fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%s", strings.ToUpper(symbol))
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		log.Printf("⚠️ ดึงราคาจาก Binance ล้มเหลว: %v", err)
+		return "ไม่สามารถดึงราคาได้ในขณะนี้"
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return "ไม่สามารถดึงราคาได้ (Binance API Error)"
+	}
+
+	body, _ := io.ReadAll(resp.Body)
+
+	var priceResp struct {
+		Symbol string `json:"symbol"`
+		Price  string `json:"price"`
+	}
+	if err := json.Unmarshal(body, &priceResp); err != nil {
+		return "ไม่สามารถแปลงข้อมูลราคาได้"
+	}
+
+	// แปลง string -> float64 เพื่อเก็บ Cache
+	var priceFloat float64
+	fmt.Sscanf(priceResp.Price, "%f", &priceFloat)
+
+	// เก็บ Cache
+	priceCacheMutex.Lock()
+	priceCache[symbol] = struct {
+		Price float64
+		Time  time.Time
+	}{Price: priceFloat, Time: time.Now()}
+	priceCacheMutex.Unlock()
+
+	log.Printf("✅ ดึงราคา %s สำเร็จ: $%.2f", symbol, priceFloat)
+	return fmt.Sprintf("$%.2f USD", priceFloat)
 }
